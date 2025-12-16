@@ -18,6 +18,7 @@ export default function Header() {
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
     { href: "/use", label: "Use Cases" },
+    // { href: "/get-qr", label: "Get QR" },
     { href: "/contact", label: "Contact" },
     { href: "/message", label: "Founder’s Message" },
     
@@ -108,6 +109,10 @@ export default function Header() {
                 {l.label}
               </a>
             ))}
+
+            <Link href="/get-qr" prefetch={false} className="hover:text-cyan-300">
+             Get QR
+            </Link>
 
             <Link
               href="/owner/vehicles"

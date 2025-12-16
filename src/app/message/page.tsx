@@ -15,7 +15,7 @@ export default function FoundersMessagePage() {
 
       {/* header / hero */}
       <section className="relative">
-        <div className="mx-auto max-w-7xl px-6 pt-16 pb-8 md:pt-24 md:pb-12">
+        <div className="mx-auto max-w-7xl px-6 pt-12 pb-8 md:pt-12 md:pb-12">
           <div className="flex flex-col items-start gap-6">
             <motion.span
               className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs tracking-wider text-white/80"
@@ -32,8 +32,14 @@ export default function FoundersMessagePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.15 }}
             >
-              Building <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">meaningful</span> tech that feels{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-500">human</span>
+              Building{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+                meaningful
+              </span>{" "}
+              tech that feels{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-500">
+                human
+              </span>
             </motion.h1>
 
             <motion.p
@@ -42,7 +48,8 @@ export default function FoundersMessagePage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              At QraTech, our mission is simple: use technology to bridge gaps, simplify lives, and help people connect better—instantly and effortlessly.
+              At QraTech, our mission is simple: use technology to bridge gaps, simplify lives, and help people connect
+              better—instantly and effortlessly.
             </motion.p>
           </div>
         </div>
@@ -52,29 +59,42 @@ export default function FoundersMessagePage() {
       <section className="relative">
         <div className="mx-auto max-w-7xl px-6 pb-20">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
-            {/* left: photo */}
+            {/* left: framed photo box (box size same, photo smaller) */}
             <motion.div
               className="md:col-span-2 relative"
               initial={{ opacity: 0, x: -12 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.25 }}
             >
-              {/* subtle red glow behind photo */}
+              {/* subtle red glow behind the whole card */}
               <motion.div
                 className="absolute -inset-6 -z-10 rounded-3xl bg-red-500/20 blur-3xl"
                 animate={{ opacity: [0.25, 0.6, 0.25] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               />
-              <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur">
-                <Image
-                  src="/images/founder.png" // <- update path if needed
-                  alt="Adarsha Bhattacharya – Founder & Director, QraTech"
-                  width={900}
-                  height={1200}
-                  className="h-full w-full object-cover"
-                  priority
-                />
+
+              {/* Outer card keeps a big fixed height so overall box size remains large */}
+              <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-4 md:p-6">
+                <div className="h-[520px] relative flex items-center justify-center">
+                  {/* Decorative frame wrapper so image appears smaller */}
+                  <div className="relative w-full max-w-[360px] mx-auto rounded-2xl border border-white/15 bg-[#0c1220]/60 p-3 md:p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]">
+                    {/* inner glow ring */}
+                    <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-white/10" />
+                    {/* framed image area with fixed aspect ratio */}
+                    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl ring-1 ring-white/10 bg-black/30">
+                      <Image
+                        src="/images/founder.png" // update path if needed
+                        alt="Adarsha Bhattacharya – Founder & Director, QraTech"
+                        fill
+                        sizes="(max-width: 768px) 90vw, 360px"
+                        className="object-contain"
+                        priority
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
+
               <div className="mt-4">
                 <h3 className="text-lg font-semibold">Adarsha Bhattacharya</h3>
                 <p className="text-white/60 text-sm">Founder & Director, QraTech</p>
