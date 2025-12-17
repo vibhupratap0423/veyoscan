@@ -1,10 +1,9 @@
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-/** Env */
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 
@@ -12,164 +11,121 @@ const EXOTEL_API_KEY = process.env.EXOTEL_API_KEY ?? "";
 const EXOTEL_API_TOKEN = process.env.EXOTEL_API_TOKEN ?? "";
 const EXOTEL_SID = process.env.EXOTEL_SID ?? "";
 const EXOTEL_SUBDOMAIN = process.env.EXOTEL_SUBDOMAIN ?? "api.in.exotel.com";
-const EXOTEL_EXOPHONE = process.env.EXOTEL_EXOPHONE ?? "";
-
-type VehicleRow = { plate: string; owner_id: string; active?: boolean | null };
-type ProfileRow = { id: string; phone: string | null; emergency_phone: string | null };
-
-type Body = {
-  plate?: string;
-  caller_phone?: string;
-  mode?: "owner" | "emergency";
-};
+const EXOTEL_EXOPHONE = process.env.EXOTEL_EXOPHONE ?? ""; // your exophone
+const WEBHOOK_SECRET = process.env.EXOTEL_WEBHOOK_SECRET ?? "";
 
 type JsonObj = Record<string, unknown>;
 
-function bad(message: string, code = 400, extra?: JsonObj) {
-  return NextResponse.json({ ok: false, error: message, ...(extra ?? {}) }, { status: code });
+function isObj(x: unknown): x is JsonObj {
+  return typeof x === "object" && x !== null;
 }
-
+function getStr(body: JsonObj, key: string): string {
+  const v = body[key];
+  return typeof v === "string" ? v.trim() : "";
+}
 function normalizePlate(raw: string): string {
-  return raw.trim().toUpperCase().replace(/\s+|-/g, "");
+  return raw.trim().toUpperCase().replace(/[\s-]+/g, "");
 }
-
-function normalizeMsisdn(raw: string | null | undefined): string | null {
-  if (!raw) return null;
-  let n = raw.trim();
-  if (!n) return null;
-  n = n.replace(/[^\d]/g, "");
-  if (n.length === 10) n = "91" + n;
-  return n;
-}
-
-async function safeJson(req: Request): Promise<Body> {
-  try {
-    const j = (await req.json()) as unknown;
-    if (typeof j === "object" && j !== null) return j as Body;
-    return {};
-  } catch {
-    return {};
-  }
-}
-
-function parseJsonText(text: string): unknown {
-  try {
-    return JSON.parse(text) as unknown;
-  } catch {
-    return text;
-  }
-}
-
-function pickSid(parsed: unknown): string | null {
-  if (typeof parsed !== "object" || parsed === null) return null;
-
-  // Exotel often returns: { Call: { Sid: "..." } }
-  const obj = parsed as Record<string, unknown>;
-  const call = obj["Call"];
-  if (typeof call === "object" && call !== null) {
-    const sid = (call as Record<string, unknown>)["Sid"];
-    if (typeof sid === "string" && sid.trim()) return sid;
-  }
-  // fallback shapes
-  const response = obj["response"];
-  if (typeof response === "object" && response !== null) {
-    const id = (response as Record<string, unknown>)["id"];
-    if (typeof id === "string" && id.trim()) return id;
-  }
-  return null;
+function normalizeMsisdn(raw: string): string {
+  const digits = raw.replace(/[^\d]/g, "");
+  if (digits.length === 10) return "91" + digits;
+  return digits;
 }
 
 export async function POST(req: Request) {
   try {
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return bad("Supabase env missing", 500);
-    if (!EXOTEL_API_KEY || !EXOTEL_API_TOKEN || !EXOTEL_SID || !EXOTEL_EXOPHONE)
-      return bad("Exotel env missing", 500);
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+      return NextResponse.json({ ok: false, error: "Supabase env missing" }, { status: 500 });
+    }
+    if (!EXOTEL_API_KEY || !EXOTEL_API_TOKEN || !EXOTEL_SID || !EXOTEL_EXOPHONE) {
+      return NextResponse.json({ ok: false, error: "Exotel env missing" }, { status: 500 });
+    }
+
+    const raw = (await req.json().catch(() => ({}))) as unknown;
+    const body: JsonObj = isObj(raw) ? raw : {};
+
+    const plate = normalizePlate(getStr(body, "plate"));
+    const callerPhone10 = getStr(body, "caller_phone");
+    const mode = getStr(body, "mode"); // "owner" | "emergency"
+
+    if (!plate) return NextResponse.json({ ok: false, error: "Missing plate" }, { status: 400 });
+    if (!callerPhone10) return NextResponse.json({ ok: false, error: "Missing caller_phone" }, { status: 400 });
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-    const body = await safeJson(req);
-    const plateRaw = body.plate ?? "";
-    const plate = normalizePlate(plateRaw);
-    const mode = body.mode ?? "owner";
-
-    if (!plate) return bad("Missing plate");
-    if (mode !== "owner" && mode !== "emergency") return bad("Invalid mode");
-
-    const callerPhone = normalizeMsisdn(body.caller_phone ?? null);
-    if (!callerPhone) return bad("Missing caller_phone (scanner mobile)", 400);
-
-    // 1) vehicle
+    // vehicle -> owner
     const { data: vehicle, error: vErr } = await supabase
       .from("vehicles")
-      .select<"plate, owner_id, active", VehicleRow>("plate, owner_id, active")
+      .select("plate, owner_id, active")
       .eq("plate", plate)
       .eq("active", true)
       .maybeSingle();
 
-    if (vErr) return bad(`DB error (vehicle): ${vErr.message}`, 500);
-    if (!vehicle) return bad(`No active vehicle found for plate ${plateRaw}`, 404);
+    if (vErr) return NextResponse.json({ ok: false, error: vErr.message }, { status: 500 });
+    if (!vehicle) return NextResponse.json({ ok: false, error: "Vehicle not found" }, { status: 404 });
 
-    // 2) owner profile
     const { data: owner, error: oErr } = await supabase
       .from("profiles")
-      .select<"id, phone, emergency_phone", ProfileRow>("id, phone, emergency_phone")
+      .select("id, phone, emergency_phone")
       .eq("id", vehicle.owner_id)
       .maybeSingle();
 
-    if (oErr) return bad(`DB error (owner): ${oErr.message}`, 500);
-    if (!owner) return bad("Owner profile not found", 404);
+    if (oErr) return NextResponse.json({ ok: false, error: oErr.message }, { status: 500 });
+    if (!owner) return NextResponse.json({ ok: false, error: "Owner profile not found" }, { status: 404 });
 
-    const ownerPhone = normalizeMsisdn(owner.phone);
-    const emergencyPhone = normalizeMsisdn(owner.emergency_phone);
-    const target = mode === "owner" ? ownerPhone : emergencyPhone;
+    const ownerPhone = owner?.phone ? normalizeMsisdn(owner.phone) : "";
+    const emergencyPhone = owner?.emergency_phone ? normalizeMsisdn(owner.emergency_phone) : "";
 
-    if (!target) {
-      return bad(mode === "owner" ? "Owner phone not set" : "Emergency phone not set", 400);
-    }
+    const to =
+      mode === "emergency"
+        ? emergencyPhone || ownerPhone
+        : ownerPhone || emergencyPhone;
 
-    // 3) Exotel connect (bridge) with Basic Auth header
+    if (!to) return NextResponse.json({ ok: false, error: "No target phone set" }, { status: 400 });
+
+    // IMPORTANT: From = caller phone (scanner), CallerId = ExoPhone
+    const from = normalizeMsisdn(callerPhone10);
+
     const url = `https://${EXOTEL_SUBDOMAIN}/v1/Accounts/${EXOTEL_SID}/Calls/connect.json`;
-    const authHeader =
-      "Basic " + Buffer.from(`${EXOTEL_API_KEY}:${EXOTEL_API_TOKEN}`).toString("base64");
-
     const form = new URLSearchParams();
-    form.set("From", callerPhone);
-    form.set("To", target);
+    form.set("From", from);
+    form.set("To", to);
     form.set("CallerId", EXOTEL_EXOPHONE);
     form.set("CallType", "trans");
+
+    // ✅ status webhook (production)
+    if (WEBHOOK_SECRET) {
+      form.set("StatusCallbackUrl", `https://qratech.in/api/exotel/webhook?secret=${encodeURIComponent(WEBHOOK_SECRET)}`);
+    }
+
+    const auth = Buffer.from(`${EXOTEL_API_KEY}:${EXOTEL_API_TOKEN}`).toString("base64");
 
     const exotelRes = await fetch(url, {
       method: "POST",
       headers: {
+        "Authorization": `Basic ${auth}`,
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: authHeader,
       },
       body: form.toString(),
     });
 
     const text = await exotelRes.text();
-    const parsed = parseJsonText(text);
+    let parsed: unknown = text;
+    try { parsed = JSON.parse(text); } catch {}
 
     if (!exotelRes.ok) {
-      return bad("Exotel call failed", exotelRes.status, { exotel: parsed as unknown });
+      return NextResponse.json(
+        { ok: false, error: "Exotel call failed", exotel: parsed },
+        { status: exotelRes.status }
+      );
     }
 
-    const sid = pickSid(parsed);
+    const callSid =
+      (parsed as { Call?: { Sid?: string } })?.Call?.Sid ?? null;
 
-    return NextResponse.json(
-      {
-        ok: true,
-        plate: vehicle.plate,
-        mode,
-        caller_phone: callerPhone,
-        target_phone: target,
-        exotel_call_sid: sid,
-        exotel: parsed,
-      },
-      { status: 200 }
-    );
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
-    return bad(`Unhandled: ${message}`, 500);
+    return NextResponse.json({ ok: true, callSid, exotel: parsed }, { status: 200 });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : "Unhandled error";
+    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
   }
 }
