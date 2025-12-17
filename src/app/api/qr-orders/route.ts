@@ -1,6 +1,7 @@
 // src/app/api/qr-orders/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+
 
 export const runtime = "nodejs";
 
@@ -72,6 +73,8 @@ export async function POST(req: NextRequest) {
     const addressLine2Val = body["addressLine2"];
     const addressLine2 =
       typeof addressLine2Val === "string" && addressLine2Val.trim() ? addressLine2Val.trim() : null;
+
+    const supabaseAdmin = getSupabaseAdmin();
 
     const { data, error } = await supabaseAdmin
       .from("qr_orders")
