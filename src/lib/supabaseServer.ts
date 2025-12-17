@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { createServerClient } from "@supabase/ssr";
 
 export async function createSupabaseServer() {
   const cookieStore = await cookies(); // read-only in RSC
@@ -12,8 +12,8 @@ export async function createSupabaseServer() {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set() {},   // no-op
-        remove() {},// no-op
+        set() {},    // no-op (RSC safe)
+        remove() {}, // no-op (RSC safe)
       },
     }
   );
