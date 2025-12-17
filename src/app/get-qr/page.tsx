@@ -9,11 +9,11 @@ export const metadata = {
 
 const CARDS = [
   { key: "vehicle",   title: "Vehicle QR",          desc: "Windshield / tank / helmet placement. Outdoor-grade & quick scan.", img: "/images/wrong parking.jpg" },
-  { key: "shop",      title: "Shop / Business QR",  desc: "Counter, door, banner — accept calls/messages and feedback instantly.", img: "/images/logo.png" },
-  { key: "personal",  title: "Personal QR",         desc: "Share your profile/contact with a single scan.", img: "/images/HOME-QR.jpg" },
-  { key: "house",     title: "House / Society QR",  desc: "Visitor connect, emergency contact, security gate workflows.", img: "/images/lost1.png" },
-  { key: "event",     title: "Event / Ticket QR",   desc: "Check-in, access control & lead capture.", img: "/images/window.svg" },
-  { key: "lostfound", title: "Lost & Found QR",     desc: "Mark items with a callback QR.", img: "/images/next.svg" },
+  { key: "shop",      title: "Shop / Business QR",  desc: "Counter, door, banner — accept calls/messages and feedback instantly.", img: "/images/shop.png" },
+  { key: "personal",  title: "Personal QR",         desc: "Share your profile/contact with a single scan.", img: "/images/persnol.jpg" },
+  { key: "house",     title: "House / Society QR",  desc: "Visitor connect, emergency contact, security gate workflows.", img: "/images/house.jpg" },
+  { key: "event",     title: "Event / Ticket QR",   desc: "Check-in, access control & lead capture.", img: "/images/event.jpg" },
+  { key: "lostfound", title: "Lost & Found QR",     desc: "Mark items with a callback QR.", img: "/images/lost1.png" },
 ];
 
 export default function GetQrLanding() {
