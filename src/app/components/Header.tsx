@@ -1,27 +1,27 @@
-"use client";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import type { User } from "@supabase/supabase-js";
-import { AnimatePresence, motion } from "framer-motion";
+'use client';
+
+import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+import type { User } from '@supabase/supabase-js';
+import { AnimatePresence, motion } from 'framer-motion';
 
 type Profile = { id: string; full_name: string | null };
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
+
+  const [menuOpen, setMenuOpen] = useState(false); // mobile hamburger
+  const [profileOpen, setProfileOpen] = useState(false); // desktop avatar dropdown
   const menuRef = useRef<HTMLDivElement>(null);
 
   const links = [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/use", label: "Use Cases" },
-    // { href: "/get-qr", label: "Get QR" },
-    { href: "/contact", label: "Contact" },
-    { href: "/message", label: "Founder’s Message" },
-    
+    { href: '/', label: 'Home' },
+    { href: '/about', label: 'About' },
+    { href: '/use', label: 'Use Cases' },
+    { href: '/contact', label: 'Contact' },
+    { href: '/message', label: "Founder’s Message" },
   ];
 
   useEffect(() => {
@@ -43,32 +43,32 @@ export default function Header() {
         setProfileOpen(false);
       }
     };
-    window.addEventListener("click", onClick);
+    window.addEventListener('click', onClick);
 
     return () => {
       sub?.subscription?.unsubscribe();
-      window.removeEventListener("click", onClick);
+      window.removeEventListener('click', onClick);
     };
   }, []);
 
   async function loadProfile(id: string) {
     const { data } = await supabase
-      .from("profiles")
-      .select("id, full_name")
-      .eq("id", id)
+      .from('profiles')
+      .select('id, full_name')
+      .eq('id', id)
       .single();
     setProfile(data || null);
   }
 
   async function signOut() {
     await supabase.auth.signOut();
-    location.href = "/";
+    location.href = '/';
   }
 
   const initials =
     profile?.full_name?.trim()?.[0]?.toUpperCase() ??
     user?.email?.[0]?.toUpperCase() ??
-    "U";
+    'U';
 
   const backdropVariants = {
     hidden: { opacity: 0 },
@@ -82,16 +82,23 @@ export default function Header() {
     exit: { opacity: 0, y: -8 },
   };
 
+  // ✅ central place for owner routes (prevents mismatch)
+  const OWNER = {
+    vehicles: '/owner/vehicles',
+    calls: '/owner/calls',
+    profile: '/owner/profile',
+  };
+
   return (
     <header className="relative z-10 bg-[#0a0f1a]">
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Top Row: lock height so logo can fill it without growing navbar */}
+        {/* Top Row */}
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Brand + Logo (no box, fills navbar height) */}
+          {/* Brand + Logo */}
           <Link href="/" className="flex items-center gap-3 text-white h-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/images/bg-logo.png" // your logo path
+              src="/images/bg-logo.png"
               alt="Qratech logo"
               className="h-full w-auto object-contain"
             />
@@ -111,31 +118,16 @@ export default function Header() {
             ))}
 
             <Link href="/get-qr" prefetch={false} className="hover:text-cyan-300">
-             Get QR
+              Get QR
             </Link>
 
-            <Link
-              href="/owner/vehicles"
-              className="text-sm text-white/80 hover:text-white"
-            >
-              Vehicles & QR
+            <Link href={OWNER.vehicles} className="text-sm text-white/80 hover:text-white">
+              Vehicles &amp; QR
             </Link>
 
             {user && (
-              <Link
-                href="/owner/call"
-                className="text-sm text-white/80 hover:text-white"
-              >
+              <Link href={OWNER.calls} className="text-sm text-white/80 hover:text-white">
                 Calls
-              </Link>
-            )}
-
-            {!user && (
-              <Link
-                href="/auth/sign-up"
-                className="rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500 px-4 py-2 text-sm font-medium shadow-lg shadow-cyan-500/20 hover:opacity-95"
-              >
-                Get Started
               </Link>
             )}
 
@@ -161,7 +153,9 @@ export default function Header() {
                     e.stopPropagation();
                     setProfileOpen((o) => !o);
                   }}
-                  className="w-9 h-9 rounded-full bg-white/10 border border-white/20 grid place-items-center"
+                  className="w-9 h-9 rounded-full bg-white/10 border border-white/20 grid place-items-center text-white"
+                  aria-haspopup="menu"
+                  aria-expanded={profileOpen}
                 >
                   <span className="font-semibold">{initials}</span>
                 </button>
@@ -169,41 +163,39 @@ export default function Header() {
                 {profileOpen && (
                   <div className="absolute right-0 mt-2 w-56 rounded-xl border border-white/20 bg-zinc-900 text-sm shadow-lg p-3">
                     <div className="flex items-center gap-3 pb-3 border-b border-white/10">
-                      <div className="w-10 h-10 rounded-full bg-white/10 grid place-items-center">
+                      <div className="w-10 h-10 rounded-full bg-white/10 grid place-items-center text-white">
                         <span className="font-semibold">{initials}</span>
                       </div>
                       <div className="min-w-0">
-                        <div className="font-medium truncate">
-                          {profile?.full_name ?? "Profile"}
+                        <div className="font-medium truncate text-white">
+                          {profile?.full_name ?? 'Profile'}
                         </div>
-                        <div className="text-zinc-400 truncate">
-                          {user?.email}
-                        </div>
+                        <div className="text-zinc-400 truncate">{user?.email}</div>
                       </div>
                     </div>
 
                     <div className="py-2">
                       <Link
-                        href="/owner/vehicles"
-                        className="block px-2 py-2 rounded hover:bg-white/10"
+                        href={OWNER.vehicles}
+                        className="block px-2 py-2 rounded hover:bg-white/10 text-white"
                       >
                         My Vehicles
                       </Link>
                       <Link
-                        href="/owner/calls"
-                        className="block px-2 py-2 rounded hover:bg-white/10"
+                        href={OWNER.calls}
+                        className="block px-2 py-2 rounded hover:bg-white/10 text-white"
                       >
                         Calls
                       </Link>
                       <Link
-                        href="/owner/vehicles"
-                        className="block px-2 py-2 rounded hover:bg-white/10"
+                        href={OWNER.vehicles}
+                        className="block px-2 py-2 rounded hover:bg-white/10 text-white"
                       >
                         Add Vehicle
                       </Link>
                       <Link
-                        href="/owner/profile"
-                        className="block px-2 py-2 rounded hover:bg-white/10"
+                        href={OWNER.profile}
+                        className="block px-2 py-2 rounded hover:bg-white/10 text-white"
                       >
                         Profile
                       </Link>
@@ -254,6 +246,7 @@ export default function Header() {
                 variants={backdropVariants}
                 transition={{ duration: 0.15 }}
               />
+
               <motion.div
                 id="mobile-menu"
                 className="relative z-50 md:hidden"
@@ -264,6 +257,67 @@ export default function Header() {
                 transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
               >
                 <div className="grid gap-2 pb-4 text-white rounded-lg border border-white/10 bg-zinc-900/80 backdrop-blur p-2">
+                  {/* ✅ Mobile Profile Card (only when logged in) */}
+                  {user && (
+                    <div className="rounded-lg border border-white/10 bg-white/5 p-3 mb-1">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-white/10 grid place-items-center">
+                          <span className="font-semibold">{initials}</span>
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-medium truncate">
+                            {profile?.full_name ?? 'Profile'}
+                          </div>
+                          <div className="text-white/60 text-sm truncate">
+                            {user?.email}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 grid gap-2">
+                        <Link
+                          href={OWNER.vehicles}
+                          className="rounded-md px-3 py-2 text-white/90 hover:bg-white/10"
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          My Vehicles
+                        </Link>
+                        <Link
+                          href={OWNER.calls}
+                          className="rounded-md px-3 py-2 text-white/90 hover:bg-white/10"
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          Calls
+                        </Link>
+                        <Link
+                          href={OWNER.vehicles}
+                          className="rounded-md px-3 py-2 text-white/90 hover:bg-white/10"
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          Add Vehicle
+                        </Link>
+                        <Link
+                          href={OWNER.profile}
+                          className="rounded-md px-3 py-2 text-white/90 hover:bg-white/10"
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          Profile
+                        </Link>
+
+                        <button
+                          onClick={() => {
+                            setMenuOpen(false);
+                            signOut();
+                          }}
+                          className="mt-1 w-full bg-red-600 hover:bg-red-500 text-white px-3 py-2 rounded-lg"
+                        >
+                          Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Normal page links */}
                   {links.map((l) => (
                     <a
                       key={l.href}
@@ -276,43 +330,23 @@ export default function Header() {
                   ))}
 
                   <Link
-                    href="/owner/vehicles"
+                    href="/get-qr"
                     className="rounded-md px-3 py-2 text-white/90 hover:bg-white/5"
                     onClick={() => setMenuOpen(false)}
                   >
-                    My Vehicles
+                    Get QR
                   </Link>
 
-                  {user && (
-                    <>
-                      <Link
-                        href="/owner/call"
-                        className="rounded-md px-3 py-2 text-white/90 hover:bg-white/5"
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        Calls
-                      </Link>
-                      <Link
-                        href="/owner/vehicles"
-                        className="rounded-md px-3 py-2 text-white/90 hover:bg-white/5"
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        Add Vehicle
-                      </Link>
-                    </>
-                  )}
+                  <Link
+                    href={OWNER.vehicles}
+                    className="rounded-md px-3 py-2 text-white/90 hover:bg-white/5"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Vehicles &amp; QR
+                  </Link>
 
+                  {/* ✅ Auth buttons only when NOT logged in */}
                   {!user && (
-                    <Link
-                      href="/auth/sign-up"
-                      className="rounded-md bg-gradient-to-r from-cyan-400 to-indigo-500 px-3 py-2 text-sm font-medium"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      Get Started
-                    </Link>
-                  )}
-
-                  {!user ? (
                     <div className="mt-2 grid gap-2">
                       <Link
                         href="/auth/sign-in"
@@ -329,16 +363,6 @@ export default function Header() {
                         Sign Up
                       </Link>
                     </div>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        setMenuOpen(false);
-                        signOut();
-                      }}
-                      className="mt-2 w-full bg-red-600 hover:bg-red-500 text-white px-3 py-2 rounded-lg"
-                    >
-                      Sign Out
-                    </button>
                   )}
                 </div>
               </motion.div>
