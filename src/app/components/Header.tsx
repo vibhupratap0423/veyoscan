@@ -85,7 +85,7 @@ export default function Header() {
   // ✅ central place for owner routes (prevents mismatch)
   const OWNER = {
     vehicles: '/owner/vehicles',
-    calls: '/owner/calls',
+    // calls: '/owner/calls',
     profile: '/owner/profile',
   };
 
@@ -125,11 +125,11 @@ export default function Header() {
               Vehicles &amp; QR
             </Link>
 
-            {user && (
+            {/* {user && (
               <Link href={OWNER.calls} className="text-sm text-white/80 hover:text-white">
                 Calls
               </Link>
-            )}
+            )} */}
 
             {!user ? (
               <div className="flex items-center gap-3">
@@ -181,12 +181,7 @@ export default function Header() {
                       >
                         My Vehicles
                       </Link>
-                      <Link
-                        href={OWNER.calls}
-                        className="block px-2 py-2 rounded hover:bg-white/10 text-white"
-                      >
-                        Calls
-                      </Link>
+                      
                       <Link
                         href={OWNER.vehicles}
                         className="block px-2 py-2 rounded hover:bg-white/10 text-white"
@@ -282,13 +277,7 @@ export default function Header() {
                         >
                           My Vehicles
                         </Link>
-                        <Link
-                          href={OWNER.calls}
-                          className="rounded-md px-3 py-2 text-white/90 hover:bg-white/10"
-                          onClick={() => setMenuOpen(false)}
-                        >
-                          Calls
-                        </Link>
+                       
                         <Link
                           href={OWNER.vehicles}
                           className="rounded-md px-3 py-2 text-white/90 hover:bg-white/10"

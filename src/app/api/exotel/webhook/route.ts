@@ -11,6 +11,7 @@ function isObj(x: unknown): x is JsonObj {
 export async function POST(req: Request) {
   const secret = new URL(req.url).searchParams.get("secret") ?? "";
   const expected = process.env.EXOTEL_WEBHOOK_SECRET ?? "";
+
   if (!expected || secret !== expected) {
     return NextResponse.json({ ok: false, error: "Forbidden" }, { status: 403 });
   }
@@ -18,7 +19,10 @@ export async function POST(req: Request) {
   const raw = (await req.json().catch(() => ({}))) as unknown;
   const body: JsonObj = isObj(raw) ? raw : {};
 
-  // Exotel different events send different fields; we just store/log for now
-  // Later: update `emergency_calls` table by CallSid
-  return NextResponse.json({ ok: true, received: body }, { status: 200 });
+  // ✅ Use body so eslint won't complain
+  // (Later you can store into Supabase using CallSid etc.)
+  return NextResponse.json(
+    { ok: true, received_keys: Object.keys(body).length },
+    { status: 200 }
+  );
 }
