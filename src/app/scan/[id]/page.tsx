@@ -1,36 +1,89 @@
 "use client";
 
-import { use, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
 type Mode = "owner" | "emergency";
 
-function normalizeUid(raw: string) {
-  return decodeURIComponent(raw ?? "")
-    .trim()
-    .toUpperCase()
-    .replace(/[\s-]+/g, "");
+type InvRow = {
+  code: string;
+  status: string;
+  assigned_to: string | null;
+  assigned_at: string | null;
+};
+
+function isUuidLike(v: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+    v
+  );
+}
+
+function normalizeId(raw: string) {
+  const v = decodeURIComponent(raw ?? "").trim();
+  if (!v) return "";
+  if (isUuidLike(v)) return v;
+  return v.toUpperCase().replace(/\s+/g, "");
 }
 
 function onlyDigits(v: string) {
   return (v ?? "").replace(/[^\d]/g, "");
 }
 
-type ApiOk = {
-  ok: true;
-  exotel_call_sid: string | null;
-};
-
-type ApiErr = {
-  ok: false;
-  error: string;
-  exotel?: unknown;
-};
+type ApiOk = { ok: true; exotel_call_sid: string | null };
+type ApiErr = { ok: false; error: string; exotel?: unknown };
 
 function isOk(x: unknown): x is ApiOk {
-  return typeof x === "object" && x !== null && (x as { ok?: unknown }).ok === true;
+  return (
+    typeof x === "object" &&
+    x !== null &&
+    (x as { ok?: unknown }).ok === true
+  );
 }
 function isErr(x: unknown): x is ApiErr {
-  return typeof x === "object" && x !== null && (x as { ok?: unknown }).ok === false;
+  return (
+    typeof x === "object" &&
+    x !== null &&
+    (x as { ok?: unknown }).ok === false
+  );
+}
+
+type AssignQrResponse = { ok: true } | { ok: false; error?: string };
+
+function isAssignQrResponse(x: unknown): x is AssignQrResponse {
+  if (!x || typeof x !== "object") return false;
+  const o = x as Record<string, unknown>;
+  if (o.ok === true) return true;
+  if (o.ok === false) return true;
+  return false;
+}
+
+function PhoneIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M6.6 10.8c1.4 2.7 3.9 5.2 6.6 6.6l2.2-2.2c.3-.3.8-.4 1.2-.2 1.3.5 2.7.8 4.2.8.7 0 1.2.5 1.2 1.2V21c0 .7-.5 1.2-1.2 1.2C10.4 22.2 1.8 13.6 1.8 3.2 1.8 2.5 2.3 2 3 2h3.4c.7 0 1.2.5 1.2 1.2 0 1.4.3 2.9.8 4.2.1.4 0 .9-.2 1.2L6.6 10.8Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function AlertIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 9v4m0 4h.01M10.3 3.9 2.6 18.1c-.6 1.1.2 2.4 1.5 2.4h15.8c1.3 0 2.1-1.3 1.5-2.4L13.7 3.9c-.7-1.2-2.4-1.2-3.4 0Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
 }
 
 export default function ScanCallPage({
@@ -38,8 +91,16 @@ export default function ScanCallPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const router = useRouter();
   const { id: idParam } = use(params);
-  const uid = useMemo(() => normalizeUid(idParam || ""), [idParam]);
+
+  const scanned = useMemo(() => normalizeId(idParam || ""), [idParam]);
+
+  const [inv, setInv] = useState<InvRow | null>(null);
+  const [invLoading, setInvLoading] = useState<boolean>(true);
+  const [invErr, setInvErr] = useState<string | null>(null);
+
+  const [authId, setAuthId] = useState<string | null>(null);
 
   const [callerPhone, setCallerPhone] = useState("");
   const [loading, setLoading] = useState<Mode | null>(null);
@@ -47,14 +108,119 @@ export default function ScanCallPage({
   const [err, setErr] = useState<string | null>(null);
   const [sid, setSid] = useState<string | null>(null);
 
+  // ✅ backend resolve karega QR_XXXX -> assigned_to -> profile
+  const effectiveUid = scanned;
+
+  useEffect(() => {
+    let alive = true;
+
+    async function init() {
+      setInvLoading(true);
+      setInvErr(null);
+
+      const { data: s } = await supabase.auth.getSession();
+      const uid = s.session?.user?.id ?? null;
+      if (alive) setAuthId(uid);
+
+      if (!scanned) {
+        if (alive) {
+          setInv(null);
+          setInvLoading(false);
+        }
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("qr_inventory")
+        .select("code,status,assigned_to,assigned_at")
+        .eq("code", scanned)
+        .maybeSingle();
+
+      if (!alive) return;
+
+      if (error) {
+        setInvErr(error.message);
+        setInv(null);
+      } else {
+        setInv((data as InvRow) ?? null);
+      }
+
+      setInvLoading(false);
+    }
+
+    void init();
+    return () => {
+      alive = false;
+    };
+  }, [scanned]);
+
+  async function activateQr() {
+    try {
+      setErr(null);
+      setMsg(null);
+
+      if (!inv?.code) {
+        setErr("This QR is not in inventory.");
+        return;
+      }
+      if (inv.status !== "available" || inv.assigned_to) {
+        setErr("This QR is already activated.");
+        return;
+      }
+      if (!authId) {
+        setErr("Please login to activate this QR.");
+        return;
+      }
+
+      setInvLoading(true);
+
+      const { data, error } = await supabase.rpc("assign_qr_code", {
+        p_code: inv.code,
+      });
+      if (error) throw new Error(error.message);
+
+      const res: AssignQrResponse | null = isAssignQrResponse(data)
+        ? (data as AssignQrResponse)
+        : null;
+
+      if (!res || res.ok !== true) {
+        const msgErr =
+          res && "error" in res && typeof res.error === "string"
+            ? res.error
+            : "Activation failed";
+        throw new Error(msgErr);
+      }
+
+      const { data: fresh, error: fErr } = await supabase
+        .from("qr_inventory")
+        .select("code,status,assigned_to,assigned_at")
+        .eq("code", inv.code)
+        .maybeSingle();
+
+      if (fErr) throw new Error(fErr.message);
+
+      setInv((fresh as InvRow) ?? null);
+      setMsg("Activated successfully ✅ Now this QR is linked to your account.");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Activation failed");
+    } finally {
+      setInvLoading(false);
+    }
+  }
+
   async function start(mode: Mode) {
     try {
       setErr(null);
       setMsg(null);
       setSid(null);
 
-      if (!uid) {
+      if (!effectiveUid) {
         setErr("Missing UID");
+        return;
+      }
+
+      if (inv?.code && !inv.assigned_to && inv.status === "available") {
+        setErr("Please activate this QR first to enable calls.");
         return;
       }
 
@@ -69,9 +235,8 @@ export default function ScanCallPage({
       const resp = await fetch("/api/exotel/call", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // ✅ send uid (backend accepts uid/id/plate)
         body: JSON.stringify({
-          uid,
+          uid: effectiveUid,
           caller_phone: phone,
           mode,
         }),
@@ -95,8 +260,8 @@ export default function ScanCallPage({
         setSid(parsed.exotel_call_sid ?? null);
         setMsg(
           mode === "owner"
-            ? "Calling owner… Please pick the incoming call to connect."
-            : "Calling emergency… Please pick the incoming call to connect."
+            ? "Connecting you to the vehicle owner… Please answer the incoming call."
+            : "Connecting you to the emergency contact… Please answer the incoming call."
         );
         return;
       }
@@ -110,6 +275,11 @@ export default function ScanCallPage({
     }
   }
 
+  const showActivate =
+    !!inv?.code && inv.status === "available" && !inv.assigned_to;
+  const isActivated =
+    !!inv?.code && (inv.status === "assigned" || !!inv.assigned_to);
+
   return (
     <div className="min-h-[calc(100vh-72px)] bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -117,28 +287,96 @@ export default function ScanCallPage({
           <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
-                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                <svg
+                  className="w-7 h-7 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                  />
                 </svg>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Vehicle Contact</h1>
-                <p className="text-indigo-100 text-sm mt-0.5">Connect with vehicle owner</p>
+                <h1 className="text-2xl font-bold text-white">QRatech Scan</h1>
+                <p className="text-indigo-100 text-sm mt-0.5">
+                  {inv?.code ? "Activate & connect" : "Connect with owner"}
+                </p>
               </div>
             </div>
           </div>
 
           <div className="p-6 space-y-6">
+            {/* scanned */}
             <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-2xl p-4 border border-white/10">
-              <div className="text-sm font-medium text-slate-400 mb-2">UID</div>
+              <div className="text-sm font-medium text-slate-400 mb-2">
+                Scanned
+              </div>
               <div className="text-xl font-bold text-white font-mono break-all">
-                {uid || "—"}
+                {scanned || "—"}
+              </div>
+
+              <div className="mt-3 text-xs text-slate-300">
+                {invLoading ? (
+                  <span>Checking activation…</span>
+                ) : inv?.code ? (
+                  <span>
+                    Status:{" "}
+                    <span className="font-semibold">
+                      {isActivated ? "Activated" : "Not activated"}
+                    </span>
+                  </span>
+                ) : (
+                  <span>Not an inventory QR (using direct UID).</span>
+                )}
+                {invErr ? (
+                  <span className="block mt-1 text-amber-300">
+                    Inventory check: {invErr}
+                  </span>
+                ) : null}
               </div>
             </div>
 
+            {/* activate */}
+            {showActivate ? (
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="text-sm text-white font-semibold">
+                  Activate this QR
+                </div>
+                <p className="mt-1 text-xs text-slate-300">
+                  Login required. Activation links this sticker to your account.
+                </p>
+
+                <button
+                  onClick={() => {
+                    if (!authId)
+                      router.push(
+                        `/login?next=/scan/${encodeURIComponent(scanned)}`
+                      );
+                    else void activateQr();
+                  }}
+                  disabled={invLoading}
+                  className="mt-3 w-full rounded-xl bg-white text-black px-4 py-3 font-semibold disabled:opacity-60"
+                >
+                  {authId
+                    ? invLoading
+                      ? "Activating…"
+                      : "Activate / Assign to my account"
+                    : "Login to activate"}
+                </button>
+              </div>
+            ) : null}
+
+            {/* call input */}
             <div className="space-y-3">
               <label className="block">
-                <div className="text-sm font-semibold text-white mb-2">Your Mobile Number</div>
+                <div className="text-sm font-semibold text-white mb-2">
+                  Your Mobile Number
+                </div>
                 <input
                   className="w-full rounded-xl bg-slate-800/50 border border-slate-700 px-4 py-3.5 text-white placeholder-slate-500 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-lg font-medium"
                   value={callerPhone}
@@ -150,7 +388,8 @@ export default function ScanCallPage({
               </label>
 
               <div className="text-xs text-slate-400 bg-slate-800/30 rounded-lg p-3">
-                Qratech will call this number first, then connect you (masked) to the owner/emergency contact.
+                QRatech will call your number first, then connect you securely
+                (masked) to the owner or emergency contact.
               </div>
             </div>
 
@@ -163,27 +402,70 @@ export default function ScanCallPage({
             {msg && (
               <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-3 text-sm">
                 <div>{msg}</div>
-                {sid && <div className="mt-2 text-xs text-emerald-400/80 font-mono">Call SID: {sid}</div>}
+                {sid && (
+                  <div className="mt-2 text-xs text-emerald-400/80 font-mono">
+                    Call SID: {sid}
+                  </div>
+                )}
               </div>
             )}
 
-            <div className="flex gap-3 pt-2">
-              <button
-                className="flex-1 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 disabled:opacity-50 px-6 py-4 text-white font-semibold"
-                onClick={() => void start("owner")}
-                disabled={!uid || loading !== null}
-              >
-                {loading === "owner" ? "Calling…" : "Contact Owner"}
-              </button>
+            {/* ✅ UPDATED UI BUTTONS (NO FEATURE CHANGE) */}
+            <div className="space-y-4 pt-1">
+              {/* Contact Owner */}
+              <div>
+                <button
+                  onClick={() => void start("owner")}
+                  disabled={!effectiveUid || loading !== null}
+                  className="w-full rounded-2xl px-6 py-4 font-semibold text-slate-900
+                             bg-gradient-to-r from-emerald-200 via-blue-300 to-emerald-200
+                             hover:from-blue-100 hover:via-yellow-200 hover:to-blue-100
+                             disabled:opacity-60 shadow-lg flex items-center justify-center gap-2"
+                >
+                  <span className="text-slate-900">
+                    <PhoneIcon />
+                  </span>
+                  {loading === "owner" ? "Calling…" : "Call QR Owner"}
+                </button>
 
-              <button
-                className="flex-1 rounded-xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 disabled:opacity-50 px-6 py-4 text-white font-semibold"
-                onClick={() => void start("emergency")}
-                disabled={!uid || loading !== null}
-              >
-                {loading === "emergency" ? "Calling…" : "Emergency Call"}
-              </button>
+                <p className="mt-2 text-xs text-slate-300 text-center">
+                  Enter your number above. You’ll receive a call from QRatech
+                  and then we’ll connect you to the owner.
+                </p>
+              </div>
+
+              {/* SOS */}
+              <div>
+                <button
+                  onClick={() => void start("emergency")}
+                  disabled={!effectiveUid || loading !== null}
+                  className="w-full rounded-2xl px-6 py-4 font-semibold text-white
+                             bg-slate-900/40 border border-red-500/60
+                             hover:bg-red-900/55 disabled:opacity-60 shadow-lg
+                             flex items-center justify-center gap-2"
+                >
+                  <span className="text-red-300">
+                    <AlertIcon />
+                  </span>
+                  {loading === "emergency" ? "Calling…" : "SOS"}
+                </button>
+
+                <p className="mt-2 text-xs text-slate-300 text-center">
+                  Use SOS in emergencies to reach the owner’s family/emergency
+                  contact quickly.
+                </p>
+              </div>
             </div>
+
+            {/* debug */}
+            {inv?.code ? (
+              <div className="text-[11px] text-slate-400">
+                QR Code:{" "}
+                <span className="font-mono text-slate-300">
+                  {scanned || "—"}
+                </span>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

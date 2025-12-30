@@ -7,6 +7,7 @@ import Hero from "./components/Hero";
 import HowItWorks from "./components/HowItWorks";
 import WhyChoose from "./components/WhyChoose";
 import QratechWhatsappPopup from "./components/QratechWhatsappPopup";
+import QratechUseCases from './components/QratechUseCases';
 
 export default function Page() {
   const [open, setOpen] = useState(false);
@@ -28,6 +29,7 @@ export default function Page() {
       <QratechWhatsappPopup open={open} onClose={closePopup} />
 
       <Hero />
+      <QratechUseCases/>
       <Features />
       <HowItWorks />
       <WhyChoose />

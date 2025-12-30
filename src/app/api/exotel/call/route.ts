@@ -18,6 +18,16 @@ function toMsisdn(v: string) {
   return d.length === 10 ? `91${d}` : d;
 }
 
+function isUuidLike(v: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+    v
+  );
+}
+
+function isInventoryCode(v: string) {
+  return /^QR_[A-Z0-9]{6,}$/i.test(v);
+}
+
 type ExotelConnectResponse = {
   Call?: { Sid?: string };
 };
@@ -38,19 +48,18 @@ function getErrorMessage(err: unknown) {
 export async function POST(req: Request) {
   try {
     const rawBody: unknown = await req.json().catch(() => ({}));
-
     const body =
       typeof rawBody === "object" && rawBody !== null
         ? (rawBody as Record<string, unknown>)
         : {};
 
-    const uid = (body.uid as string | undefined) ?? null;
-    const plate = (body.plate as string | undefined) ?? null;
+    const uidRaw = ((body.uid as string | undefined) ?? "").trim();
+    const plateRaw = ((body.plate as string | undefined) ?? "").trim();
 
-    const caller = (body.caller_phone as string | undefined) ?? "";
-    const mode = (body.mode as string | undefined) ?? "";
+    const caller = ((body.caller_phone as string | undefined) ?? "").trim();
+    const mode = ((body.mode as string | undefined) ?? "").trim();
 
-    if (!caller || !mode) {
+    if (!caller || (mode !== "owner" && mode !== "emergency")) {
       return NextResponse.json(
         { ok: false, error: "Invalid request" },
         { status: 400 }
@@ -60,12 +69,53 @@ export async function POST(req: Request) {
     let ownerPhone = "";
     let emergencyPhone = "";
 
-    /* ---------------- UID BASED FLOW (NEW) ---------------- */
-    if (uid) {
+    /* ---------------- UID BASED FLOW (UUID or Inventory Code) ---------------- */
+    if (uidRaw) {
+      let resolvedUserId: string | null = null;
+
+      // 1) uid is already a UUID
+      if (isUuidLike(uidRaw)) {
+        resolvedUserId = uidRaw;
+      }
+
+      // 2) uid is inventory code like QR_XXXX
+      if (!resolvedUserId && isInventoryCode(uidRaw)) {
+        const { data: inv, error: invErr } = await supabase
+          .from("qr_inventory")
+          .select("assigned_to,status")
+          .eq("code", uidRaw)
+          .single(); // ✅ unique code
+
+        if (invErr) {
+          return NextResponse.json(
+            { ok: false, error: "Inventory lookup failed" },
+            { status: 500 }
+          );
+        }
+
+        if (!inv?.assigned_to) {
+          return NextResponse.json(
+            { ok: false, error: "QR not activated yet" },
+            { status: 400 }
+          );
+        }
+
+        resolvedUserId = String(inv.assigned_to);
+      }
+
+      // 3) uid was provided but not resolvable
+      if (!resolvedUserId) {
+        return NextResponse.json(
+          { ok: false, error: "Invalid UID / QR code" },
+          { status: 400 }
+        );
+      }
+
+      // 4) fetch profile phones
       const { data: profile, error } = await supabase
         .from("profiles")
         .select("phone, emergency_phone")
-        .eq("id", uid)
+        .eq("id", resolvedUserId)
         .single();
 
       if (error || !profile) {
@@ -80,28 +130,42 @@ export async function POST(req: Request) {
     }
 
     /* ---------------- PLATE BASED FLOW (LEGACY SAFE) ---------------- */
-    if (!uid && plate) {
-      const { data: vehicle } = await supabase
+    if (!ownerPhone && !emergencyPhone && plateRaw) {
+      const { data: vehicle, error: vErr } = await supabase
         .from("vehicles")
         .select("owner_id")
-        .eq("plate", plate)
-        .single();
+        .eq("plate", plateRaw)
+        .maybeSingle();
 
-      if (!vehicle) {
+      if (vErr) {
+        return NextResponse.json(
+          { ok: false, error: "Vehicle lookup failed" },
+          { status: 500 }
+        );
+      }
+
+      if (!vehicle?.owner_id) {
         return NextResponse.json(
           { ok: false, error: "Vehicle not found" },
           { status: 404 }
         );
       }
 
-      const { data: profile } = await supabase
+      const { data: profile, error: pErr } = await supabase
         .from("profiles")
         .select("phone, emergency_phone")
         .eq("id", vehicle.owner_id)
         .single();
 
-      ownerPhone = profile?.phone ?? "";
-      emergencyPhone = profile?.emergency_phone ?? "";
+      if (pErr || !profile) {
+        return NextResponse.json(
+          { ok: false, error: "Profile not found" },
+          { status: 404 }
+        );
+      }
+
+      ownerPhone = profile.phone ?? "";
+      emergencyPhone = profile.emergency_phone ?? "";
     }
 
     const to =
