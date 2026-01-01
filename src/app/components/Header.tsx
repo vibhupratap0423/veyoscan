@@ -82,11 +82,11 @@ export default function Header() {
     exit: { opacity: 0, y: -8 },
   };
 
-  // ✅ central place for owner routes (prevents mismatch)
+  // ✅ central place for owner routes (only what you need now)
   const OWNER = {
-    vehicles: '/owner/vehicles',
-    // calls: '/owner/calls',
     profile: '/owner/profile',
+    ownerNumber: '/owner/profile', // ✅ same profile page (owner number section)
+    emergencyNumber: '/owner/profile', // ✅ same profile page (emergency number section)
   };
 
   return (
@@ -120,16 +120,6 @@ export default function Header() {
             <Link href="/get-qr" prefetch={false} className="hover:text-cyan-300">
               Get QR
             </Link>
-
-            <Link href={OWNER.vehicles} className="text-sm text-white/80 hover:text-white">
-              Vehicles &amp; QR
-            </Link>
-
-            {/* {user && (
-              <Link href={OWNER.calls} className="text-sm text-white/80 hover:text-white">
-                Calls
-              </Link>
-            )} */}
 
             {!user ? (
               <div className="flex items-center gap-3">
@@ -176,18 +166,19 @@ export default function Header() {
 
                     <div className="py-2">
                       <Link
-                        href={OWNER.vehicles}
+                        href={OWNER.ownerNumber}
                         className="block px-2 py-2 rounded hover:bg-white/10 text-white"
                       >
-                        My Vehicles
+                        Add Owner Number
                       </Link>
-                      
+
                       <Link
-                        href={OWNER.vehicles}
+                        href={OWNER.emergencyNumber}
                         className="block px-2 py-2 rounded hover:bg-white/10 text-white"
                       >
-                        Add Vehicle
+                        Add Emergency Number
                       </Link>
+
                       <Link
                         href={OWNER.profile}
                         className="block px-2 py-2 rounded hover:bg-white/10 text-white"
@@ -271,20 +262,21 @@ export default function Header() {
 
                       <div className="mt-3 grid gap-2">
                         <Link
-                          href={OWNER.vehicles}
+                          href={OWNER.ownerNumber}
                           className="rounded-md px-3 py-2 text-white/90 hover:bg-white/10"
                           onClick={() => setMenuOpen(false)}
                         >
-                          My Vehicles
+                          Add Owner Number
                         </Link>
-                       
+
                         <Link
-                          href={OWNER.vehicles}
+                          href={OWNER.emergencyNumber}
                           className="rounded-md px-3 py-2 text-white/90 hover:bg-white/10"
                           onClick={() => setMenuOpen(false)}
                         >
-                          Add Vehicle
+                          Add Emergency Number
                         </Link>
+
                         <Link
                           href={OWNER.profile}
                           className="rounded-md px-3 py-2 text-white/90 hover:bg-white/10"
@@ -324,14 +316,6 @@ export default function Header() {
                     onClick={() => setMenuOpen(false)}
                   >
                     Get QR
-                  </Link>
-
-                  <Link
-                    href={OWNER.vehicles}
-                    className="rounded-md px-3 py-2 text-white/90 hover:bg-white/5"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Vehicles &amp; QR
                   </Link>
 
                   {/* ✅ Auth buttons only when NOT logged in */}
