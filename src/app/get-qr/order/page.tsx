@@ -1,5 +1,5 @@
-// app/get-qr/order/page.tsx
-import OrderForm from "./ui/OrderForm";
+// src/app/get-qr/order/page.tsx
+import OrderAuthGate from "./ui/OrderAuthGate";
 
 export const metadata = {
   title: "Place QR Order | QRatech",
@@ -11,7 +11,7 @@ export default async function OrderPage({
 }: {
   searchParams: Promise<{ type?: string }>;
 }) {
-  const sp = await searchParams;                // ✅ await it
+  const sp = await searchParams;
   const type = (sp?.type || "personal").toLowerCase();
 
   return (
@@ -29,7 +29,7 @@ export default async function OrderPage({
             </p>
           </header>
 
-          <OrderForm type={type} />
+          <OrderAuthGate type={type} />
         </div>
       </section>
     </main>

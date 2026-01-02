@@ -3,6 +3,7 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
+// import Link from "next/link";
 
 // ✅ Supabase client (browser)
 const supabase = createClient(
@@ -10,13 +11,27 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+// ✅ prevent open-redirect: allow only internal paths like "/get-qr/order?type=vehicle"
+function safeNext(next: string | null, fallback = "/owner/profile") {
+  if (!next) return fallback;
+  const v = next.trim();
+
+  // must start with "/" (internal)
+  if (!v.startsWith("/")) return fallback;
+
+  // block protocol-based or double-slash
+  if (v.startsWith("//")) return fallback;
+
+  return v;
+}
+
 export default function SignInClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   // ✅ default redirect to profile (if next not provided)
   const nextUrl = useMemo(() => {
-    return searchParams.get("next") || "/owner/profile";
+    return safeNext(searchParams.get("next"), "/owner/profile");
   }, [searchParams]);
 
   const [email, setEmail] = useState("");
@@ -44,7 +59,7 @@ export default function SignInClient() {
       return;
     }
 
-    // ✅ redirect after successful login
+    // ✅ redirect after successful login (same as your old)
     router.replace(nextUrl);
   }
 
@@ -92,6 +107,10 @@ export default function SignInClient() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+
+            {/* <Link href="/forgot-password" className="text-sm text-slate-700 underline">
+              Forgot password?
+            </Link> */}
           </div>
 
           {/* Button */}
