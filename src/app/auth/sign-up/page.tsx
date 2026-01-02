@@ -2,8 +2,11 @@
 import { supabase } from "@/lib/supabaseClient";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation"; // ✅ added
 
 export default function SignUp() {
+  const router = useRouter(); // ✅ added
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,8 +16,11 @@ export default function SignUp() {
     e.preventDefault();
     setLoading(true);
 
-    // Create auth user
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    // ✅ Create auth user
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
     if (error) {
       alert(error.message);
@@ -24,17 +30,26 @@ export default function SignUp() {
 
     const uid = data.user?.id;
 
-    // Insert or update profile in "profiles" table
+    // ✅ Insert / update profile
     if (uid) {
       const { error: insertError } = await supabase
         .from("profiles")
-        .upsert({ id: uid, full_name: fullName, role: "owner" }, { onConflict: "id" });
+        .upsert(
+          { id: uid, full_name: fullName, role: "owner" },
+          { onConflict: "id" }
+        );
 
-      if (insertError) alert(insertError.message);
-      else alert("Sign-up successful! Please verify your email before logging in.");
+      if (insertError) {
+        alert(insertError.message);
+        setLoading(false);
+        return;
+      }
     }
 
     setLoading(false);
+
+    // ✅ redirect to profile page after successful signup
+    router.replace("/owner/profile");
   }
 
   return (
@@ -45,7 +60,7 @@ export default function SignUp() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="w-full max-w-md rounded-2xl bg-white/[0.05] backdrop-blur-xl border border-white/10 shadow-2xl p-8 sm:p-10"
       >
-        {/* Header Section */}
+        {/* Header */}
         <div className="text-center mb-6">
           <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400 to-indigo-500 shadow-lg shadow-cyan-500/20">
             🚀
@@ -101,32 +116,7 @@ export default function SignUp() {
             disabled={loading}
             className="w-full mt-2 rounded-xl bg-gradient-to-r from-cyan-400 to-indigo-500 py-3 font-medium shadow-lg shadow-cyan-500/30 hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 disabled:opacity-60"
           >
-            {loading ? (
-              <span className="inline-flex items-center gap-2">
-                <svg
-                  className="h-4 w-4 animate-spin"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-20"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    fill="none"
-                  />
-                  <path
-                    className="opacity-90"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4z"
-                  />
-                </svg>
-                Signing up...
-              </span>
-            ) : (
-              "Sign Up"
-            )}
+            {loading ? "Signing up..." : "Sign Up"}
           </motion.button>
 
           <p className="text-center text-sm text-white/60 mt-3">
@@ -143,10 +133,7 @@ export default function SignUp() {
         {/* Footer */}
         <p className="mt-6 text-center text-[11px] text-white/45">
           By signing up, you agree to our{" "}
-          <a
-            href="/privacy"
-            className="underline hover:text-white/70"
-          >
+          <a href="/privacy" className="underline hover:text-white/70">
             Privacy Policy
           </a>.
         </p>

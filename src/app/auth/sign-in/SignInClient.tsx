@@ -14,9 +14,9 @@ export default function SignInClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // ✅ default home now (dashboard removed)
+  // ✅ default redirect to profile (if next not provided)
   const nextUrl = useMemo(() => {
-    return searchParams.get("next") || "/";
+    return searchParams.get("next") || "/owner/profile";
   }, [searchParams]);
 
   const [email, setEmail] = useState("");
@@ -56,9 +56,7 @@ export default function SignInClient() {
           <h1 className="text-3xl font-semibold tracking-tight text-white">
             Welcome back
           </h1>
-          <p className="text-sm text-slate-400">
-            Sign in to continue
-          </p>
+          <p className="text-sm text-slate-400">Sign in to continue</p>
         </div>
 
         {/* Error */}
