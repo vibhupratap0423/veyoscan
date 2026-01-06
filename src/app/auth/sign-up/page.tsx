@@ -1,16 +1,34 @@
 "use client";
+
 import { supabase } from "@/lib/supabaseClient";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation"; // ✅ added
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
-  const router = useRouter(); // ✅ added
+  const router = useRouter();
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  async function signUpWithGoogle() {
+    const siteUrl =
+      process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        // ✅ after google, come back to our callback page then go to profile
+        redirectTo: `${siteUrl}/auth/callback?next=${encodeURIComponent(
+          "/owner/profile"
+        )}`,
+      },
+    });
+
+    if (error) alert(error.message);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -71,6 +89,22 @@ export default function SignUp() {
           <p className="text-sm text-white/70 mt-1">
             Join Qratech and start connecting instantly
           </p>
+        </div>
+
+        {/* ✅ Google Sign Up */}
+        <motion.button
+          type="button"
+          whileTap={{ scale: 0.97 }}
+          onClick={signUpWithGoogle}
+          className="w-full rounded-xl bg-white/[0.08] border border-white/10 py-3 font-medium hover:bg-white/[0.12] transition"
+        >
+          Continue with Google
+        </motion.button>
+
+        <div className="flex items-center gap-3 my-5">
+          <div className="h-px flex-1 bg-white/10" />
+          <span className="text-xs text-white/50">or</span>
+          <div className="h-px flex-1 bg-white/10" />
         </div>
 
         {/* Form */}
@@ -135,7 +169,8 @@ export default function SignUp() {
           By signing up, you agree to our{" "}
           <a href="/privacy" className="underline hover:text-white/70">
             Privacy Policy
-          </a>.
+          </a>
+          .
         </p>
       </motion.div>
     </section>

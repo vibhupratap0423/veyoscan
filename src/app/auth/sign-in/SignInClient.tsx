@@ -2,14 +2,8 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-// import Link from "next/link";
-
-// ✅ Supabase client (browser)
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import Link from "next/link";
+import { supabase } from "@/lib/supabaseClient";
 
 // ✅ prevent open-redirect: allow only internal paths like "/get-qr/order?type=vehicle"
 function safeNext(next: string | null, fallback = "/owner/profile") {
@@ -40,6 +34,25 @@ export default function SignInClient() {
   // ✅ UX states
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  async function onGoogle() {
+    setErrorMsg(null);
+
+    const siteUrl =
+      process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        // ✅ after google, come back to our callback page then redirect to nextUrl
+        redirectTo: `${siteUrl}/auth/callback?next=${encodeURIComponent(
+          nextUrl
+        )}`,
+      },
+    });
+
+    if (error) setErrorMsg(error.message);
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -81,6 +94,22 @@ export default function SignInClient() {
           </div>
         ) : null}
 
+        {/* ✅ Google button */}
+        <button
+          type="button"
+          onClick={onGoogle}
+          className="w-full rounded-lg bg-white/10 border border-white/10 py-2.5 font-medium text-white hover:bg-white/15 transition"
+        >
+          Continue with Google
+        </button>
+
+        {/* divider */}
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-white/10" />
+          <span className="text-xs text-slate-400">or</span>
+          <div className="h-px flex-1 bg-white/10" />
+        </div>
+
         {/* Form */}
         <form onSubmit={onSubmit} className="space-y-4">
           {/* Email */}
@@ -108,9 +137,12 @@ export default function SignInClient() {
               required
             />
 
-            {/* <Link href="/forgot-password" className="text-sm text-slate-700 underline">
+            <Link
+              href="/forgot-password"
+              className="text-xs text-slate-300 hover:text-white underline"
+            >
               Forgot password?
-            </Link> */}
+            </Link>
           </div>
 
           {/* Button */}

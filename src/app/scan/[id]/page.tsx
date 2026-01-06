@@ -34,18 +34,10 @@ type ApiOk = { ok: true; exotel_call_sid: string | null };
 type ApiErr = { ok: false; error: string; exotel?: unknown };
 
 function isOk(x: unknown): x is ApiOk {
-  return (
-    typeof x === "object" &&
-    x !== null &&
-    (x as { ok?: unknown }).ok === true
-  );
+  return typeof x === "object" && x !== null && (x as { ok?: unknown }).ok === true;
 }
 function isErr(x: unknown): x is ApiErr {
-  return (
-    typeof x === "object" &&
-    x !== null &&
-    (x as { ok?: unknown }).ok === false
-  );
+  return typeof x === "object" && x !== null && (x as { ok?: unknown }).ok === false;
 }
 
 type AssignQrResponse = { ok: true } | { ok: false; error?: string };
@@ -108,7 +100,6 @@ export default function ScanCallPage({
   const [err, setErr] = useState<string | null>(null);
   const [sid, setSid] = useState<string | null>(null);
 
-  // ✅ backend resolve karega QR_XXXX -> assigned_to -> profile
   const effectiveUid = scanned;
 
   useEffect(() => {
@@ -275,20 +266,22 @@ export default function ScanCallPage({
     }
   }
 
-  const showActivate =
-    !!inv?.code && inv.status === "available" && !inv.assigned_to;
-  const isActivated =
-    !!inv?.code && (inv.status === "assigned" || !!inv.assigned_to);
+  const showActivate = !!inv?.code && inv.status === "available" && !inv.assigned_to;
+  const isActivated = !!inv?.code && (inv.status === "assigned" || !!inv.assigned_to);
 
   return (
-    <div className="min-h-[calc(100vh-72px)] bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    // ✅ mobile pe top align + safe viewport height + less padding
+    <div className="min-h-[calc(100svh-72px)] bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex items-start sm:items-center justify-center px-3 py-3 sm:p-4">
+      {/* ✅ width slightly smaller on mobile */}
+      <div className="w-full max-w-[320px] sm:max-w-md">
         <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
+          {/* ✅ header padding reduced on mobile */}
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 sm:p-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
+              {/* ✅ icon box slightly smaller on mobile */}
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/20 flex items-center justify-center">
                 <svg
-                  className="w-7 h-7 text-white"
+                  className="w-6 h-6 sm:w-7 sm:h-7 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -301,26 +294,33 @@ export default function ScanCallPage({
                   />
                 </svg>
               </div>
+
               <div>
-                <h1 className="text-2xl font-bold text-white">QRatech Scan</h1>
-                <p className="text-indigo-100 text-sm mt-0.5">
+                {/* ✅ title size responsive */}
+                <h1 className="text-xl sm:text-2xl font-bold text-white">
+                  QRatech Scan
+                </h1>
+                <p className="text-indigo-100 text-xs sm:text-sm mt-0.5">
                   {inv?.code ? "Activate & connect" : "Connect with owner"}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="p-6 space-y-6">
+          {/* ✅ body padding + spacing reduced on mobile */}
+          <div className="p-3 sm:p-6 space-y-3 sm:space-y-6">
             {/* scanned */}
-            <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-2xl p-4 border border-white/10">
-              <div className="text-sm font-medium text-slate-400 mb-2">
+            <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-2xl p-3 sm:p-4 border border-white/10">
+              <div className="text-xs sm:text-sm font-medium text-slate-400 mb-1.5 sm:mb-2">
                 Scanned
               </div>
-              <div className="text-xl font-bold text-white font-mono break-all">
+
+              {/* ✅ scanned text a bit smaller on mobile */}
+              <div className="text-lg sm:text-xl font-bold text-white font-mono break-all leading-snug">
                 {scanned || "—"}
               </div>
 
-              <div className="mt-3 text-xs text-slate-300">
+              <div className="mt-2 sm:mt-3 text-[11px] sm:text-xs text-slate-300">
                 {invLoading ? (
                   <span>Checking activation…</span>
                 ) : inv?.code ? (
@@ -333,6 +333,7 @@ export default function ScanCallPage({
                 ) : (
                   <span>Not an inventory QR (using direct UID).</span>
                 )}
+
                 {invErr ? (
                   <span className="block mt-1 text-amber-300">
                     Inventory check: {invErr}
@@ -343,24 +344,22 @@ export default function ScanCallPage({
 
             {/* activate */}
             {showActivate ? (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4">
                 <div className="text-sm text-white font-semibold">
                   Activate this QR
                 </div>
-                <p className="mt-1 text-xs text-slate-300">
+                <p className="mt-1 text-[11px] sm:text-xs text-slate-300">
                   Login required. Activation links this sticker to your account.
                 </p>
 
                 <button
                   onClick={() => {
                     if (!authId)
-                      router.push(
-                        `/login?next=/scan/${encodeURIComponent(scanned)}`
-                      );
+                      router.push(`/login?next=/scan/${encodeURIComponent(scanned)}`);
                     else void activateQr();
                   }}
                   disabled={invLoading}
-                  className="mt-3 w-full rounded-xl bg-white text-black px-4 py-3 font-semibold disabled:opacity-60"
+                  className="mt-3 w-full rounded-xl bg-white text-black px-4 py-2.5 sm:py-3 font-semibold disabled:opacity-60"
                 >
                   {authId
                     ? invLoading
@@ -372,13 +371,15 @@ export default function ScanCallPage({
             ) : null}
 
             {/* call input */}
-            <div className="space-y-3">
+            <div className="space-y-2.5 sm:space-y-3">
               <label className="block">
                 <div className="text-sm font-semibold text-white mb-2">
                   Your Mobile Number
                 </div>
+
+                {/* ✅ input height + font reduced on mobile */}
                 <input
-                  className="w-full rounded-xl bg-slate-800/50 border border-slate-700 px-4 py-3.5 text-white placeholder-slate-500 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-lg font-medium"
+                  className="w-full rounded-xl bg-slate-800/50 border border-slate-700 px-4 py-3 sm:py-3.5 text-white placeholder-slate-500 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-base sm:text-lg font-medium"
                   value={callerPhone}
                   onChange={(e) => setCallerPhone(onlyDigits(e.target.value))}
                   placeholder="10-digit number"
@@ -387,20 +388,21 @@ export default function ScanCallPage({
                 />
               </label>
 
-              <div className="text-xs text-slate-400 bg-slate-800/30 rounded-lg p-3">
+              {/* ✅ info box padding reduced */}
+              <div className="text-[11px] sm:text-xs text-slate-400 bg-slate-800/30 rounded-lg p-2.5 sm:p-3">
                 QRatech will call your number first, then connect you securely
                 (masked) to the owner or emergency contact.
               </div>
             </div>
 
             {err && (
-              <div className="rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 text-sm">
+              <div className="rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-2.5 sm:py-3 text-sm">
                 {err}
               </div>
             )}
 
             {msg && (
-              <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-3 text-sm">
+              <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-2.5 sm:py-3 text-sm">
                 <div>{msg}</div>
                 {sid && (
                   <div className="mt-2 text-xs text-emerald-400/80 font-mono">
@@ -410,14 +412,14 @@ export default function ScanCallPage({
               </div>
             )}
 
-            {/* ✅ UPDATED UI BUTTONS (NO FEATURE CHANGE) */}
-            <div className="space-y-4 pt-1">
+            {/* buttons */}
+            <div className="space-y-3 sm:space-y-4 pt-0">
               {/* Contact Owner */}
               <div>
                 <button
                   onClick={() => void start("owner")}
                   disabled={!effectiveUid || loading !== null}
-                  className="w-full rounded-2xl px-6 py-4 font-semibold text-slate-900
+                  className="w-full rounded-2xl px-6 py-3.5 sm:py-4 font-semibold text-slate-900
                              bg-gradient-to-r from-emerald-200 via-blue-300 to-emerald-200
                              hover:from-blue-100 hover:via-yellow-200 hover:to-blue-100
                              disabled:opacity-60 shadow-lg flex items-center justify-center gap-2"
@@ -428,9 +430,9 @@ export default function ScanCallPage({
                   {loading === "owner" ? "Calling…" : "Call QR Owner"}
                 </button>
 
-                <p className="mt-2 text-xs text-slate-300 text-center">
-                  Enter your number above. You’ll receive a call from QRatech
-                  and then we’ll connect you to the owner.
+                <p className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs text-slate-300 text-center">
+                  Enter your number above. You’ll receive a call from QRatech and
+                  then we’ll connect you to the owner.
                 </p>
               </div>
 
@@ -439,8 +441,8 @@ export default function ScanCallPage({
                 <button
                   onClick={() => void start("emergency")}
                   disabled={!effectiveUid || loading !== null}
-                  className="w-full rounded-2xl px-6 py-4 font-semibold text-white
-                             bg-slate-900/40 border border-red-500/60
+                  className="w-full rounded-2xl px-6 py-3.5 sm:py-4 font-semibold text-white
+                             bg-red-900/40 border border-red-500/60
                              hover:bg-red-900/55 disabled:opacity-60 shadow-lg
                              flex items-center justify-center gap-2"
                 >
@@ -450,20 +452,17 @@ export default function ScanCallPage({
                   {loading === "emergency" ? "Calling…" : "SOS"}
                 </button>
 
-                <p className="mt-2 text-xs text-slate-300 text-center">
-                  Use SOS in emergencies to reach the owner’s family/emergency
-                  contact quickly.
+                <p className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs text-slate-300 text-center">
+                  Use SOS contact button wleely in case of accidents or emergencies to contact family members of the owner.
                 </p>
               </div>
             </div>
 
             {/* debug */}
             {inv?.code ? (
-              <div className="text-[11px] text-slate-400">
+              <div className="text-[10px] sm:text-[11px] text-slate-400">
                 QR Code:{" "}
-                <span className="font-mono text-slate-300">
-                  {scanned || "—"}
-                </span>
+                <span className="font-mono text-slate-300">{scanned || "—"}</span>
               </div>
             ) : null}
           </div>
