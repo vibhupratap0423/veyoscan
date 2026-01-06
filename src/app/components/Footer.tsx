@@ -66,10 +66,10 @@ export default function Footer() {
             </li>
             <li>
               <Link
-                href="/owner/vehicles"
+                href="/get-qr/pricing"
                 className="hover:text-cyan-300 transition"
               >
-                My Vehicles
+                Pricing
               </Link>
             </li>
             <li>
@@ -139,7 +139,7 @@ export default function Footer() {
         <motion.a
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          href="/owner/vehicles"
+          href="/get-qr"
           className="bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-semibold px-6 py-3 rounded-full shadow-[0_0_25px_rgba(34,211,238,0.5)] hover:shadow-[0_0_35px_rgba(34,211,238,0.8)] transition"
         >
           Get Your QR
