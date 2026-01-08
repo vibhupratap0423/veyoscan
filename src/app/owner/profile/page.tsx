@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useMemo, useState } from "react";
 
 type ProfileRow = {
+  id: string;
   full_name: string | null;
   phone: string | null;
   emergency_phone: string | null;
@@ -24,30 +25,35 @@ function getErrMessage(e: unknown) {
 }
 
 export default function ProfilePage() {
-  const [uid, setUid] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
+  const [uid, setUid] = useState("");
+  const [email, setEmail] = useState("");
 
-  const [name, setName] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [emergencyPhone, setEmergencyPhone] = useState<string>("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [emergencyPhone, setEmergencyPhone] = useState("");
 
-  const [loading, setLoading] = useState<boolean>(true);
-  const [busy, setBusy] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
 
-  // ✅ keep logic (but DO NOT show it in UI)
-  const scanLink = useMemo(() => {
+  // ✅ short path only (no full url)
+  const scanPath = useMemo(() => {
     if (!uid) return "";
     return `/scan/${uid}`;
   }, [uid]);
 
   useEffect(() => {
+    let alive = true;
+
     async function load() {
       setLoading(true);
       setErr(null);
+      setMsg(null);
 
       const { data: auth, error: aErr } = await supabase.auth.getUser();
+      if (!alive) return;
+
       if (aErr) {
         setErr(aErr.message);
         setLoading(false);
@@ -68,7 +74,9 @@ export default function ProfilePage() {
         .from("profiles")
         .select("full_name, phone, emergency_phone")
         .eq("id", user.id)
-        .maybeSingle<ProfileRow>();
+        .maybeSingle<Pick<ProfileRow, "full_name" | "phone" | "emergency_phone">>();
+
+      if (!alive) return;
 
       if (pErr) {
         setErr(pErr.message);
@@ -76,16 +84,17 @@ export default function ProfilePage() {
         return;
       }
 
-      if (p) {
-        setName(p.full_name ?? "");
-        setPhone(p.phone ?? "");
-        setEmergencyPhone(p.emergency_phone ?? "");
-      }
+      setName(p?.full_name ?? "");
+      setPhone(p?.phone ?? "");
+      setEmergencyPhone(p?.emergency_phone ?? "");
 
       setLoading(false);
     }
 
     void load();
+    return () => {
+      alive = false;
+    };
   }, []);
 
   async function save() {
@@ -100,16 +109,27 @@ export default function ProfilePage() {
       const user = auth?.user;
       if (!user) throw new Error("Not logged in");
 
+      const p = phone ? onlyDigits(phone) : "";
+      const e = emergencyPhone ? onlyDigits(emergencyPhone) : "";
+
+      if (p && p.length !== 10) throw new Error("Owner mobile must be 10 digits");
+      if (e && e.length !== 10) throw new Error("Emergency mobile must be 10 digits");
+
       const payload: ProfileRow = {
+        id: user.id,
         full_name: name.trim() || null,
-        phone: phone ? onlyDigits(phone) : null,
-        emergency_phone: emergencyPhone ? onlyDigits(emergencyPhone) : null,
+        phone: p || null,
+        emergency_phone: e || null,
       };
 
-      const { error } = await supabase.from("profiles").update(payload).eq("id", user.id);
+      // ✅ Upsert so new row is created if missing
+      const { error } = await supabase.from("profiles").upsert(payload, {
+        onConflict: "id",
+      });
+
       if (error) throw new Error(error.message);
 
-      setMsg("Profile updated successfully ✅");
+      setMsg("Saved ✅");
     } catch (e: unknown) {
       setErr(getErrMessage(e));
     } finally {
@@ -117,12 +137,11 @@ export default function ProfilePage() {
     }
   }
 
-  // ✅ Optional helper: copy scan link (not visible), used internally only if needed later
-  async function copyScanLink() {
-    if (!scanLink) return;
+  async function copyScanPath() {
+    if (!scanPath) return;
     try {
-      await navigator.clipboard.writeText(scanLink);
-      setMsg("Link copied ✅");
+      await navigator.clipboard.writeText(scanPath);
+      setMsg("Scan path copied ✅");
     } catch {
       setErr("Copy failed");
     }
@@ -131,20 +150,8 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 shadow-2xl">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-white/10 animate-pulse" />
-            <div className="flex-1 space-y-2">
-              <div className="h-4 w-2/3 rounded bg-white/10 animate-pulse" />
-              <div className="h-3 w-1/2 rounded bg-white/10 animate-pulse" />
-            </div>
-          </div>
-          <div className="mt-6 space-y-3">
-            <div className="h-11 rounded-xl bg-white/10 animate-pulse" />
-            <div className="h-11 rounded-xl bg-white/10 animate-pulse" />
-            <div className="h-11 rounded-xl bg-white/10 animate-pulse" />
-            <div className="h-11 rounded-xl bg-white/10 animate-pulse" />
-          </div>
+        <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-6">
+          <div className="text-slate-200">Loading…</div>
         </div>
       </div>
     );
@@ -153,16 +160,9 @@ export default function ProfilePage() {
   if (!uid) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-2xl border border-rose-500/20 bg-rose-500/10 p-6 text-rose-200 shadow-2xl">
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 h-9 w-9 rounded-xl bg-rose-500/15 grid place-items-center">
-              <span className="animate-pulse">!</span>
-            </div>
-            <div>
-              <div className="font-semibold">Access denied</div>
-              <div className="text-sm opacity-90">{err || "Not logged in"}</div>
-            </div>
-          </div>
+        <div className="w-full max-w-md rounded-2xl border border-rose-500/20 bg-rose-500/10 p-6 text-rose-200">
+          <div className="font-semibold">Access denied</div>
+          <div className="text-sm opacity-90">{err || "Not logged in"}</div>
         </div>
       </div>
     );
@@ -170,182 +170,112 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-4 py-10">
-      <div className="mx-auto w-full max-w-2xl space-y-6">
+      <div className="mx-auto w-full max-w-2xl space-y-5">
         {/* Header */}
-        <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl p-6 sm:p-8">
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-1">
-              <div className="text-xs tracking-wider text-slate-400 uppercase">
-                Account Settings
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-semibold text-white">
-                Profile
-              </h1>
-              <div className="text-sm text-slate-400 break-all">
-                {email || "—"}
-              </div>
-            </div>
-
-            {/* Avatar + subtle animation */}
-            <div className="relative">
-              <div className="h-14 w-14 rounded-2xl bg-red-to-br from-blue-500/30 to-cyan-400/20 border border-white/10 grid place-items-center shadow-lg">
-                <span className="text-white/90 text-lg">👤</span>
-              </div>
-              <div className="absolute -inset-1 rounded-3xl blur-xl bg-indigo-500/10 animate-pulse" />
-            </div>
-          </div>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+          <div className="text-xs tracking-wider text-slate-400 uppercase">Account</div>
+          <h1 className="mt-1 text-2xl font-semibold text-white">Profile</h1>
+          <div className="mt-1 text-sm text-slate-400 break-all">{email || "—"}</div>
         </div>
 
-        {/* Alerts */}
+        {/* Alert */}
         {err ? (
-          <div className="rounded-2xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200 shadow-lg">
-            <div className="flex items-start gap-3">
-              <div className="h-9 w-9 rounded-xl bg-red-500/15 grid place-items-center">
-                <span className="animate-bounce">⚠️</span>
-              </div>
-              <div className="flex-1">{err}</div>
-            </div>
+          <div className="rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            {err}
           </div>
         ) : null}
-
         {msg ? (
-          <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200 shadow-lg">
-            <div className="flex items-start gap-3">
-              <div className="h-9 w-9 rounded-xl bg-emerald-500/15 grid place-items-center">
-                <span className="animate-bounce">✅</span>
-              </div>
-              <div className="flex-1">{msg}</div>
-            </div>
+          <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+            {msg}
           </div>
         ) : null}
 
-        {/* Form Card */}
-        <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl p-6 sm:p-8">
-          <div className="flex items-center justify-between gap-3">
+        {/* Scan path (short only) */}
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold text-white">Personal Details</h2>
-              <p className="text-sm text-slate-400">
-                Keep your contact info updated for alerts & emergency calls.
-              </p>
+              <div className="text-sm font-semibold text-white">QR Scan Path</div>
+              <div className="text-xs text-slate-400">Short path only (no full link).</div>
             </div>
-
-            {/* 🔒 Link hidden - only optional internal action */}
-            {/* If you want to remove even copy functionality, delete this button */}
             <button
               type="button"
-              onClick={() => void copyScanLink()}
-              className="hidden sm:inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-200 hover:bg-white/10 transition"
-              title="Copy QR scan link (internal)"
+              onClick={() => void copyScanPath()}
+              className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 hover:bg-white/10"
             >
-              <span className="animate-pulse">🔒</span>
-              Copy Link
+              Copy
             </button>
           </div>
 
-          <div className="mt-6 grid grid-cols-1 gap-4">
-            {/* Full Name */}
-            <div className="group">
+          <div className="mt-3 rounded-xl border border-white/10 bg-black/20 px-4 py-3">
+            <div className="text-xs text-slate-400">UID</div>
+            <div className="text-sm text-white break-all">{uid}</div>
+
+            <div className="mt-2 text-xs text-slate-400">Path</div>
+            <div className="text-sm text-white break-all">{scanPath}</div>
+          </div>
+        </div>
+
+        {/* Form */}
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+          <h2 className="text-lg font-semibold text-white">Personal Details</h2>
+          <p className="text-sm text-slate-400">
+            Keep your contact info updated for alerts & emergency calls.
+          </p>
+
+          <div className="mt-5 grid grid-cols-1 gap-4">
+            <div>
               <label className="text-sm text-slate-300">Full Name</label>
-              <div className="mt-1 flex items-center gap-3 rounded-2xl border border-white/10 bg-black/20 px-4 py-3 transition group-focus-within:border-indigo-500/60 group-focus-within:ring-2 group-focus-within:ring-indigo-500/20">
-                <span className="text-slate-300 animate-pulse">🪪</span>
-                <input
-                  className="w-full bg-transparent outline-none text-white placeholder:text-slate-500"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your full name"
-                  autoComplete="name"
-                />
-              </div>
+              <input
+                className="mt-1 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your full name"
+                autoComplete="name"
+              />
             </div>
 
-            {/* Phone */}
-            <div className="group">
+            <div>
               <label className="text-sm text-slate-300">Owner Mobile Number</label>
-              <div className="mt-1 flex items-center gap-3 rounded-2xl border border-white/10 bg-black/20 px-4 py-3 transition group-focus-within:border-indigo-500/60 group-focus-within:ring-2 group-focus-within:ring-indigo-500/20">
-                <span className="text-slate-300 animate-pulse">📞</span>
-                <input
-                  className="w-full bg-transparent outline-none text-white placeholder:text-slate-500"
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(onlyDigits(e.target.value))}
-                  placeholder="10-digit mobile"
-                  inputMode="numeric"
-                  maxLength={10}
-                  autoComplete="tel"
-                />
-              </div>
-              <div className="mt-1 text-xs text-slate-500">
-                Only digits. Used for ownership & support contact.
-              </div>
+              <input
+                className="mt-1 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(onlyDigits(e.target.value))}
+                placeholder="10-digit mobile"
+                inputMode="numeric"
+                maxLength={10}
+                autoComplete="tel"
+              />
+              <div className="mt-1 text-xs text-slate-500">10 digits only.</div>
             </div>
 
-            {/* Emergency Phone */}
-            <div className="group">
+            <div>
               <label className="text-sm text-slate-300">Emergency Contact Number</label>
-              <div className="mt-1 flex items-center gap-3 rounded-2xl border border-white/10 bg-black/20 px-4 py-3 transition group-focus-within:border-indigo-500/60 group-focus-within:ring-2 group-focus-within:ring-indigo-500/20">
-                <span className="text-slate-300 animate-pulse">🚨</span>
-                <input
-                  className="w-full bg-transparent outline-none text-white placeholder:text-slate-500"
-                  type="tel"
-                  value={emergencyPhone}
-                  onChange={(e) => setEmergencyPhone(onlyDigits(e.target.value))}
-                  placeholder="10-digit mobile"
-                  inputMode="numeric"
-                  maxLength={10}
-                  autoComplete="tel"
-                />
-              </div>
-              <div className="mt-1 text-xs text-slate-500">
-                This number will be used in emergency flow.
-              </div>
+              <input
+                className="mt-1 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none"
+                type="tel"
+                value={emergencyPhone}
+                onChange={(e) => setEmergencyPhone(onlyDigits(e.target.value))}
+                placeholder="10-digit mobile"
+                inputMode="numeric"
+                maxLength={10}
+                autoComplete="tel"
+              />
+              <div className="mt-1 text-xs text-slate-500">10 digits only.</div>
             </div>
 
-            {/* Actions */}
-            <div className="pt-2 flex flex-col sm:flex-row gap-3">
+            <div className="pt-2">
               <button
-                className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-3 font-semibold transition active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-indigo-600/25"
+                className="w-full rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-3 font-semibold disabled:opacity-60"
                 onClick={() => void save()}
                 disabled={busy}
               >
-                <span className={busy ? "animate-spin" : "animate-bounce"}>
-                  {busy ? "⏳" : "💾"}
-                </span>
                 {busy ? "Saving…" : "Save Changes"}
               </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setErr(null);
-                  setMsg(null);
-                  // no functionality changed; just clears UI messages
-                }}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 font-semibold text-slate-200 hover:bg-white/10 transition active:scale-[0.98]"
-              >
-                <span className="animate-pulse">🧹</span>
-                Clear Message
-              </button>
-            </div>
-
-            {/* Privacy note */}
-            <div className="mt-2 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
-              <div className="flex items-start gap-3">
-                <div className="h-9 w-9 rounded-xl bg-white/10 grid place-items-center">
-                  <span className="animate-pulse">🛡️</span>
-                </div>
-                <div>
-                  <div className="font-semibold text-white">Privacy</div>
-                  <div className="text-slate-400">
-                    Do not share your QR scan link to prevent misuse. Only your
-                    saved contact details are displayed.
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
         <div className="text-center text-xs text-slate-500">
           Secured profile settings • {new Date().getFullYear()}
         </div>
