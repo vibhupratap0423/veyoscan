@@ -355,7 +355,7 @@ export default function ScanCallPage({
                 <button
                   onClick={() => {
                     if (!authId)
-                      router.push(`/login?next=/scan/${encodeURIComponent(scanned)}`);
+                      router.push(`/auth/sign-in?next=/scan/${encodeURIComponent(scanned)}`);
                     else void activateQr();
                   }}
                   disabled={invLoading}
