@@ -78,6 +78,17 @@ function AlertIcon() {
   );
 }
 
+// ✅ NEW: typed response for /api/scan/profile (no any)
+type BloodApiOk = { ok: true; blood_group: string | null };
+type BloodApiErr = { ok: false; error: string };
+type BloodApiResp = BloodApiOk | BloodApiErr;
+
+function isBloodApiResp(x: unknown): x is BloodApiResp {
+  if (!x || typeof x !== "object") return false;
+  const o = x as Record<string, unknown>;
+  return o.ok === true || o.ok === false;
+}
+
 export default function ScanCallPage({
   params,
 }: {
@@ -99,6 +110,10 @@ export default function ScanCallPage({
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [sid, setSid] = useState<string | null>(null);
+
+  // ✅ only blood group
+  const [bloodGroup, setBloodGroup] = useState<string | null>(null);
+  const [bloodLoading, setBloodLoading] = useState(false);
 
   const effectiveUid = scanned;
 
@@ -144,6 +159,50 @@ export default function ScanCallPage({
       alive = false;
     };
   }, [scanned]);
+
+  // ✅ fetch blood group via API (NO any)
+  useEffect(() => {
+    let alive = true;
+
+    async function loadBlood() {
+      if (!scanned) {
+        if (alive) setBloodGroup(null);
+        return;
+      }
+
+      setBloodLoading(true);
+      try {
+        const resp = await fetch("/api/scan/profile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            code: inv?.code ? scanned : "",
+            uid: !inv?.code && isUuidLike(scanned) ? scanned : "",
+          }),
+        });
+
+        const parsedUnknown: unknown = await resp.json().catch(() => null);
+        if (!alive) return;
+
+        if (!resp.ok || !isBloodApiResp(parsedUnknown) || parsedUnknown.ok !== true) {
+          setBloodGroup(null);
+          return;
+        }
+
+        setBloodGroup(parsedUnknown.blood_group);
+      } catch {
+        if (alive) setBloodGroup(null);
+      } finally {
+        if (alive) setBloodLoading(false);
+      }
+    }
+
+    if (!invLoading) void loadBlood();
+
+    return () => {
+      alive = false;
+    };
+  }, [scanned, invLoading, inv?.code]);
 
   async function activateQr() {
     try {
@@ -270,36 +329,19 @@ export default function ScanCallPage({
   const isActivated = !!inv?.code && (inv.status === "assigned" || !!inv.assigned_to);
 
   return (
-    // ✅ mobile pe top align + safe viewport height + less padding
     <div className="min-h-[calc(100svh-72px)] bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex items-start sm:items-center justify-center px-3 py-3 sm:p-4">
-      {/* ✅ width slightly smaller on mobile */}
       <div className="w-full max-w-[320px] sm:max-w-md">
         <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-          {/* ✅ header padding reduced on mobile */}
           <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 sm:p-6">
             <div className="flex items-center gap-3">
-              {/* ✅ icon box slightly smaller on mobile */}
               <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/20 flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 sm:w-7 sm:h-7 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-                  />
+                <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                 </svg>
               </div>
 
               <div>
-                {/* ✅ title size responsive */}
-                <h1 className="text-xl sm:text-2xl font-bold text-white">
-                  QRatech Scan
-                </h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-white">QRatech Scan</h1>
                 <p className="text-indigo-100 text-xs sm:text-sm mt-0.5">
                   {inv?.code ? "Activate & connect" : "Connect with owner"}
                 </p>
@@ -307,7 +349,6 @@ export default function ScanCallPage({
             </div>
           </div>
 
-          {/* ✅ body padding + spacing reduced on mobile */}
           <div className="p-3 sm:p-6 space-y-3 sm:space-y-6">
             {/* scanned */}
             <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-2xl p-3 sm:p-4 border border-white/10">
@@ -315,7 +356,6 @@ export default function ScanCallPage({
                 Scanned
               </div>
 
-              {/* ✅ scanned text a bit smaller on mobile */}
               <div className="text-lg sm:text-xl font-bold text-white font-mono break-all leading-snug">
                 {scanned || "—"}
               </div>
@@ -340,14 +380,34 @@ export default function ScanCallPage({
                   </span>
                 ) : null}
               </div>
+
+              {/* Only Blood Group */}
+              <div className="mt-3 pt-3 border-t border-white/10">
+                {bloodLoading ? (
+                  <div className="text-[11px] sm:text-xs text-slate-300">
+                    Loading blood group…
+                  </div>
+                ) : bloodGroup ? (
+                  <div className="flex items-center justify-between">
+                    <div className="text-[11px] sm:text-xs text-slate-300">
+                      Blood Group
+                    </div>
+                    <div className="rounded-full border border-white/15 bg-black/20 px-3 py-1 text-white text-sm font-semibold">
+                      {bloodGroup}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-[11px] sm:text-xs text-slate-400">
+                    Blood group will appear after activation / if saved by owner.
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* activate */}
             {showActivate ? (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4">
-                <div className="text-sm text-white font-semibold">
-                  Activate this QR
-                </div>
+                <div className="text-sm text-white font-semibold">Activate this QR</div>
                 <p className="mt-1 text-[11px] sm:text-xs text-slate-300">
                   Login required. Activation links this sticker to your account.
                 </p>
@@ -377,7 +437,6 @@ export default function ScanCallPage({
                   Your Mobile Number
                 </div>
 
-                {/* ✅ input height + font reduced on mobile */}
                 <input
                   className="w-full rounded-xl bg-slate-800/50 border border-slate-700 px-4 py-3 sm:py-3.5 text-white placeholder-slate-500 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-base sm:text-lg font-medium"
                   value={callerPhone}
@@ -388,7 +447,6 @@ export default function ScanCallPage({
                 />
               </label>
 
-              {/* ✅ info box padding reduced */}
               <div className="text-[11px] sm:text-xs text-slate-400 bg-slate-800/30 rounded-lg p-2.5 sm:p-3">
                 QRatech will call your number first, then connect you securely
                 (masked) to the owner or emergency contact.
@@ -414,7 +472,6 @@ export default function ScanCallPage({
 
             {/* buttons */}
             <div className="space-y-3 sm:space-y-4 pt-0">
-              {/* Contact Owner */}
               <div>
                 <button
                   onClick={() => void start("owner")}
@@ -429,14 +486,8 @@ export default function ScanCallPage({
                   </span>
                   {loading === "owner" ? "Calling…" : "Call QR Owner"}
                 </button>
-
-                <p className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs text-slate-300 text-center">
-                  Enter your number above. You’ll receive a call from QRatech and
-                  then we’ll connect you to the owner.
-                </p>
               </div>
 
-              {/* SOS */}
               <div>
                 <button
                   onClick={() => void start("emergency")}
@@ -451,18 +502,12 @@ export default function ScanCallPage({
                   </span>
                   {loading === "emergency" ? "Calling…" : "SOS"}
                 </button>
-
-                <p className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs text-slate-300 text-center">
-                  Use SOS contact button wleely in case of accidents or emergencies to contact family members of the owner.
-                </p>
               </div>
             </div>
 
-            {/* debug */}
             {inv?.code ? (
               <div className="text-[10px] sm:text-[11px] text-slate-400">
-                QR Code:{" "}
-                <span className="font-mono text-slate-300">{scanned || "—"}</span>
+                QR Code: <span className="font-mono text-slate-300">{scanned || "—"}</span>
               </div>
             ) : null}
           </div>

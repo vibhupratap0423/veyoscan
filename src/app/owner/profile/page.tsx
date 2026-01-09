@@ -3,11 +3,14 @@
 import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useMemo, useState } from "react";
 
+type BloodGroup = "" | "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
+
 type ProfileRow = {
   id: string;
   full_name: string | null;
   phone: string | null;
   emergency_phone: string | null;
+  blood_group: BloodGroup | null;
 };
 
 function onlyDigits(v: string) {
@@ -31,13 +34,13 @@ export default function ProfilePage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [emergencyPhone, setEmergencyPhone] = useState("");
+  const [bloodGroup, setBloodGroup] = useState<BloodGroup>("");
 
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
 
-  // ✅ short path only (no full url)
   const scanPath = useMemo(() => {
     if (!uid) return "";
     return `/scan/${uid}`;
@@ -72,9 +75,11 @@ export default function ProfilePage() {
 
       const { data: p, error: pErr } = await supabase
         .from("profiles")
-        .select("full_name, phone, emergency_phone")
+        .select("full_name, phone, emergency_phone, blood_group")
         .eq("id", user.id)
-        .maybeSingle<Pick<ProfileRow, "full_name" | "phone" | "emergency_phone">>();
+        .maybeSingle<
+          Pick<ProfileRow, "full_name" | "phone" | "emergency_phone" | "blood_group">
+        >();
 
       if (!alive) return;
 
@@ -87,6 +92,7 @@ export default function ProfilePage() {
       setName(p?.full_name ?? "");
       setPhone(p?.phone ?? "");
       setEmergencyPhone(p?.emergency_phone ?? "");
+      setBloodGroup((p?.blood_group as BloodGroup) ?? "");
 
       setLoading(false);
     }
@@ -120,9 +126,9 @@ export default function ProfilePage() {
         full_name: name.trim() || null,
         phone: p || null,
         emergency_phone: e || null,
+        blood_group: bloodGroup ? bloodGroup : null,
       };
 
-      // ✅ Upsert so new row is created if missing
       const { error } = await supabase.from("profiles").upsert(payload, {
         onConflict: "id",
       });
@@ -190,7 +196,7 @@ export default function ProfilePage() {
           </div>
         ) : null}
 
-        {/* Scan path (short only) */}
+        {/* Scan path */}
         <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
@@ -262,6 +268,26 @@ export default function ProfilePage() {
                 autoComplete="tel"
               />
               <div className="mt-1 text-xs text-slate-500">10 digits only.</div>
+            </div>
+
+            {/* ✅ Blood Group */}
+            <div>
+              <label className="text-sm text-slate-300">Blood Group</label>
+              <select
+                className="mt-1 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none"
+                value={bloodGroup}
+                onChange={(e) => setBloodGroup(e.target.value as BloodGroup)}
+              >
+                <option value="" className="bg-slate-900">
+                  Select blood group
+                </option>
+                {["A+","A-","B+","B-","AB+","AB-","O+","O-"].map((bg) => (
+                  <option key={bg} value={bg} className="bg-slate-900">
+                    {bg}
+                  </option>
+                ))}
+              </select>
+              <div className="mt-1 text-xs text-slate-500">Optional but recommended.</div>
             </div>
 
             <div className="pt-2">
