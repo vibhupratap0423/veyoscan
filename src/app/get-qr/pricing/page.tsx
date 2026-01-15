@@ -91,7 +91,7 @@ export default function PricingPage() {
                 Renewal: <span className="font-semibold">₹199 / year</span>
               </p>
               <p className="mt-1 text-xs text-white/60">
-                QR ko active rakhne ke liye yearly activation.
+                Features continue with yearly activation.
               </p>
             </div>
 
@@ -150,7 +150,7 @@ export default function PricingPage() {
                 Renewal: <span className="font-semibold">₹299 / year</span>
               </p>
               <p className="mt-1 text-xs text-white/60">
-                Premium features continue yearly activation se.
+                Features continue with yearly activation.
               </p>
             </div>
 
