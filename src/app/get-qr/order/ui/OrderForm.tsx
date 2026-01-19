@@ -129,8 +129,19 @@ async function loadRazorpayScript() {
 
 /* ---------------- UI Bits ---------------- */
 
-function Label({ children }: { children: React.ReactNode }) {
-  return <label className="text-sm text-white/70">{children}</label>;
+function Label({
+  children,
+  required,
+}: {
+  children: React.ReactNode;
+  required?: boolean;
+}) {
+  return (
+    <label className="text-sm text-white/70">
+      {children}
+      {required ? <span className="ml-1 text-rose-400">*</span> : null}
+    </label>
+  );
 }
 
 function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
@@ -352,7 +363,6 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
     const accessToken = sessionRes.session?.access_token || "";
     if (!accessToken) throw new Error("Session expired. Please sign in again.");
 
-    // ✅ packKey optional to store (server can store pack, helpful for backoffice)
     const payload = {
       orderType: orderTypeToSend(),
       qratechEmail: email,
@@ -378,7 +388,11 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
       body: JSON.stringify(payload),
     });
 
-    const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string; id?: unknown };
+    const json = (await res.json().catch(() => ({}))) as {
+      ok?: boolean;
+      error?: string;
+      id?: unknown;
+    };
 
     const ok = res.ok && (json.ok === true || typeof json.id !== "undefined");
     if (!ok) throw new Error(json?.error || "Order creation failed.");
@@ -399,7 +413,6 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
     const accessToken = sessionRes.session?.access_token || "";
     if (!accessToken) throw new Error("Session expired. Please sign in again.");
 
-    // ✅ IMPORTANT: server must create rp order with amount based on DB quantity
     const r1 = await fetch("/api/razorpay/order", {
       method: "POST",
       headers: {
@@ -409,7 +422,6 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
       body: JSON.stringify({
         qrOrderId: orderId,
         pack: packKey,
-        // quantity client sends for convenience, but server should trust DB.
         quantity: qty,
       }),
     });
@@ -586,11 +598,14 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
                     </p>
 
                     {orderType === "other" && (
-                      <Input
-                        value={otherType}
-                        onChange={(e) => setOtherType(e.target.value)}
-                        placeholder="Enter a label (e.g., Pet QR, Bag QR)"
-                      />
+                      <div className="grid gap-2">
+                        <Label required>Other label</Label>
+                        <Input
+                          value={otherType}
+                          onChange={(e) => setOtherType(e.target.value)}
+                          placeholder="Enter a label (e.g., Pet QR, Bag QR)"
+                        />
+                      </div>
                     )}
                   </div>
                 </div>
@@ -633,12 +648,16 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
 
                 <div className="mt-4 grid gap-5 sm:grid-cols-2">
                   <div className="grid gap-2">
-                    <Label>Full Name</Label>
-                    <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your name" />
+                    <Label required>Full Name</Label>
+                    <Input
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Your name"
+                    />
                   </div>
 
                   <div className="grid gap-2">
-                    <Label>Phone</Label>
+                    <Label required>Phone</Label>
                     <Input
                       value={phone}
                       onChange={(e) => setPhone(onlyDigits(e.target.value))}
@@ -673,7 +692,7 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
 
                 <div className="mt-4 grid gap-5">
                   <div className="grid gap-2">
-                    <Label>Address Line 1</Label>
+                    <Label required>Address Line 1</Label>
                     <Input
                       value={address1}
                       onChange={(e) => setAddress1(e.target.value)}
@@ -692,12 +711,16 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
 
                   <div className="grid gap-5 sm:grid-cols-2">
                     <div className="grid gap-2">
-                      <Label>District</Label>
-                      <Input value={district} onChange={(e) => setDistrict(e.target.value)} placeholder="District" />
+                      <Label required>District</Label>
+                      <Input
+                        value={district}
+                        onChange={(e) => setDistrict(e.target.value)}
+                        placeholder="District"
+                      />
                     </div>
 
                     <div className="grid gap-2">
-                      <Label>Pincode</Label>
+                      <Label required>Pincode</Label>
                       <Input
                         value={pincode}
                         onChange={(e) => setPincode(onlyDigits(e.target.value))}
@@ -769,7 +792,9 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
 
                 <div className="mt-4 text-xs text-white/55">
                   Renewal:{" "}
-                  <span className="font-semibold text-white">{formatINR(PACKS[packKey].renewalRupee)}/year</span>
+                  <span className="font-semibold text-white">
+                    {formatINR(PACKS[packKey].renewalRupee)}/year
+                  </span>
                 </div>
               </div>
 

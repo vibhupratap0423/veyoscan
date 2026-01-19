@@ -68,7 +68,7 @@ from emergencies to simple parking interactions.`,
         title: "Lost Belongings",
         icon: <FiPhoneCall className="text-cyan-300" size={24} />,
         desc: "You left your phone, wallet, or helmet in a café. The finder scans your QR tag and reaches you without needing to reveal personal numbers or apps.",
-        img: "/images/lost1.png",
+        img: "/images/lost2.png",
       },
       {
         title: "Community Safety",

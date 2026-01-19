@@ -50,8 +50,8 @@ export default function PricingPage() {
           </h1>
 
           <p className="mt-3 text-sm md:text-base text-white/70">
-            Ek baar purchase karo, QR sticker + activation included. Aage yearly
-            activation charge ke saath QR active rahega.
+           Purchase once — QR sticker and activation are included. The QR will remain active with an annual activation charge.
+
           </p>
         </div>
 
@@ -182,8 +182,7 @@ export default function PricingPage() {
             Need help choosing a plan?
           </p>
           <p className="mt-2 text-sm text-white/70">
-            Economy personal users ke liye best hai. Premium business/branding ke
-            liye. Order ke baad email pe confirmation aa jayega.
+           Economy is best for personal users. Premium is ideal for business and branding. After placing the order, a confirmation will be sent to your email.
           </p>
 
           <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
