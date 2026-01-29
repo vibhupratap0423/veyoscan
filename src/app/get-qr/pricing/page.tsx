@@ -64,7 +64,7 @@ export default function PricingPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm text-white/70">Economy Pack</p>
-                <h2 className="mt-1 text-2xl font-bold">Best for personal use</h2>
+                <h2 className="mt-1 text-2xl font-bold">Best For Personal Use</h2>
               </div>
 
               <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80">
@@ -123,7 +123,7 @@ export default function PricingPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm text-white/70">Premium Pack</p>
-                <h2 className="mt-1 text-2xl font-bold">Best for businesses</h2>
+                <h2 className="mt-1 text-2xl font-bold">Best For Businesses</h2>
               </div>
 
               <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80">
@@ -139,10 +139,10 @@ export default function PricingPage() {
             </div>
 
             <div className="mt-6 grid gap-3">
-              <Check text="Premium sticker quality" />
-              <Check text="Customized sticker option" />
-              <Check text="Priority processing & support" />
-              <Check text="Premium QR features access" />
+              <Check text="2-year validity from the date of activation" />
+              <Check text="Get 4 QR stickers with 2 unique designs" />
+              <Check text="Access to all upcoming upgraded features at no additional cost" />
+              <Check text="Free delivery across India" />
             </div>
 
             <div className="mt-6 rounded-2xl border border-white/10 bg-black/25 p-4">

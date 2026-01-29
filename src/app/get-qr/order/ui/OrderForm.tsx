@@ -114,6 +114,8 @@ const ORDER_TYPES: Array<{ key: OrderTypeKey; label: string; hint: string }> = [
   { key: "other", label: "Other", hint: "Custom label (pet, bag, etc.)" },
 ];
 
+const ECONOMY_DELIVERY_FEE = 40;
+
 async function loadRazorpayScript() {
   if (typeof window === "undefined") return false;
   if (getRazorpayCtor()) return true;
@@ -293,7 +295,16 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
 
   const qty = useMemo(() => clampInt(quantity, 1, 99), [quantity]);
 
-  const totalAmount = useMemo(() => PACKS[packKey].purchaseRupee * qty, [packKey, qty]);
+  // ✅ NEW: Economy delivery charge only
+  const deliveryCharge = useMemo(
+    () => (packKey === "economy" ? ECONOMY_DELIVERY_FEE : 0),
+    [packKey]
+  );
+
+  const subTotal = useMemo(() => PACKS[packKey].purchaseRupee * qty, [packKey, qty]);
+
+  // ✅ Payable includes delivery (only for economy)
+  const totalAmount = useMemo(() => subTotal + deliveryCharge, [subTotal, deliveryCharge]);
 
   const canSubmit = useMemo(() => {
     if (!fullName.trim()) return false;
@@ -423,6 +434,9 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
         qrOrderId: orderId,
         pack: packKey,
         quantity: qty,
+        // ✅ Optional: if your backend supports it, it can use this for economy delivery.
+        // If backend ignores unknown fields, it won't break anything.
+        deliveryChargeRupee: deliveryCharge,
       }),
     });
 
@@ -448,7 +462,10 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
       amount: String(amountPaise),
       currency: "INR",
       name: "QRatech",
-      description: `${PACKS[packKey].title} • Qty ${qty}`,
+      description:
+        deliveryCharge > 0
+          ? `${PACKS[packKey].title} • Qty ${qty} • Delivery Charges ${formatINR(deliveryCharge)}`
+          : `${PACKS[packKey].title} • Qty ${qty} • Delivery Free`,
       order_id: rpOrderId,
       prefill: {
         name: fullName.trim(),
@@ -506,7 +523,11 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
 
       if (paymentMethod === "cod") {
         openModal(
-          "Order placed successfully.\nPayment method: Cash on Delivery.\nRedirecting to Get QR…"
+          `Order placed successfully.\nPayment method: Cash on Delivery.\n${
+            deliveryCharge > 0
+              ? `Delivery Charges: ${formatINR(deliveryCharge)}\n`
+              : "Delivery: Free\n"
+          }Redirecting to Get QR…`
         );
         return;
       }
@@ -560,13 +581,13 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   <ChoiceCard
                     title="Economy"
-                    sub="₹399 purchase • ₹199/year renewal"
+                    sub="₹399 purchase • ₹199/year renewal • +₹40 delivery"
                     selected={packKey === "economy"}
                     onClick={() => setPackKey("economy")}
                   />
                   <ChoiceCard
                     title="Premium"
-                    sub="₹699 purchase • ₹299/year renewal"
+                    sub="₹699 purchase • ₹299/year renewal • Delivery free"
                     selected={packKey === "premium"}
                     onClick={() => setPackKey("premium")}
                   />
@@ -785,7 +806,19 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
                   <span className="font-semibold text-white">{qty}</span>
                 </div>
 
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-sm text-white/70">Subtotal</span>
+                  <span className="font-semibold text-white">{formatINR(subTotal)}</span>
+                </div>
+
                 <div className="mt-2 flex items-center justify-between">
+                  <span className="text-sm text-white/70">Delivery Charges</span>
+                  <span className="font-semibold text-white">
+                    {deliveryCharge > 0 ? formatINR(deliveryCharge) : "Free"}
+                  </span>
+                </div>
+
+                <div className="mt-4 flex items-center justify-between">
                   <span className="text-sm text-white/70">Payable</span>
                   <span className="text-3xl font-extrabold text-white">{formatINR(totalAmount)}</span>
                 </div>

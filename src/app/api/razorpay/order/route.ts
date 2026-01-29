@@ -72,6 +72,16 @@ async function getUserIdFromToken(token: string) {
   return userId;
 }
 
+/** ✅ Economy delivery fee (paise) */
+const ECONOMY_DELIVERY_FEE = 4000;
+
+/** ✅ Safe int */
+function clampInt(n: unknown, min: number, max: number) {
+  const x = Math.floor(Number(n));
+  if (!Number.isFinite(x)) return min;
+  return Math.max(min, Math.min(max, x));
+}
+
 export async function POST(req: NextRequest) {
   try {
     const token = getBearer(req);
@@ -114,10 +124,15 @@ export async function POST(req: NextRequest) {
     }
 
     // ✅ IMPORTANT: compute amount using DB quantity (server is source of truth)
-    // FIXED: removed `as any` to satisfy @typescript-eslint/no-explicit-any
-    const qty = Math.max(1, Number(ord.quantity ?? 1));
-    const baseAmount = PACKS[pack].amount;
-    const amount = baseAmount * qty;
+    const qty = clampInt(ord.quantity ?? 1, 1, 99);
+
+    const baseAmount = PACKS[pack].amount * qty;
+
+    // ✅ Delivery: ONLY economy, premium is free
+    const deliveryFee = pack === "economy" ? ECONOMY_DELIVERY_FEE : 0;
+
+    // ✅ Final amount (paise)
+    const amount = baseAmount + deliveryFee;
 
     const { keyId, instance } = getRazorpay();
 
@@ -131,6 +146,9 @@ export async function POST(req: NextRequest) {
         userId: String(userId),
         pack,
         quantity: String(qty),
+        deliveryFeePaise: String(deliveryFee),
+        baseAmountPaise: String(baseAmount),
+        finalAmountPaise: String(amount),
       },
     });
 
@@ -146,7 +164,15 @@ export async function POST(req: NextRequest) {
 
     if (upErr) return j({ ok: false, error: "Failed to update order" }, 500);
 
-    return j({ ok: true, keyId, order: rpOrder, pack, quantity: qty });
+    return j({
+      ok: true,
+      keyId,
+      order: rpOrder,
+      pack,
+      quantity: qty,
+      deliveryFeePaise: deliveryFee,
+      amountPaise: amount,
+    });
   } catch (e: unknown) {
     console.error("razorpay order error:", e);
     return j({ ok: false, error: getErrMessage(e) }, 500);

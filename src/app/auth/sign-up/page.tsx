@@ -9,9 +9,14 @@ export default function SignUp() {
   const router = useRouter();
 
   const [fullName, setFullName] = useState("");
+  const [mobile, setMobile] = useState(""); // ✅ NEW
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  function onlyDigits(v: string) {
+    return v.replace(/[^\d]/g, "");
+  }
 
   async function signUpWithGoogle() {
     const siteUrl =
@@ -20,7 +25,6 @@ export default function SignUp() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        // ✅ after google, come back to our callback page then go to profile
         redirectTo: `${siteUrl}/auth/callback?next=${encodeURIComponent(
           "/owner/profile"
         )}`,
@@ -32,6 +36,12 @@ export default function SignUp() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (mobile.length !== 10) {
+      alert("Please enter a valid 10-digit mobile number");
+      return;
+    }
+
     setLoading(true);
 
     // ✅ Create auth user
@@ -48,12 +58,17 @@ export default function SignUp() {
 
     const uid = data.user?.id;
 
-    // ✅ Insert / update profile
+    // ✅ Insert / update profile (WITH MOBILE)
     if (uid) {
       const { error: insertError } = await supabase
         .from("profiles")
         .upsert(
-          { id: uid, full_name: fullName, role: "owner" },
+          {
+            id: uid,
+            full_name: fullName,
+            phone: mobile, // ✅ SAVED IN DB
+            role: "owner",
+          },
           { onConflict: "id" }
         );
 
@@ -65,8 +80,6 @@ export default function SignUp() {
     }
 
     setLoading(false);
-
-    // ✅ redirect to profile page after successful signup
     router.replace("/owner/profile");
   }
 
@@ -91,7 +104,7 @@ export default function SignUp() {
           </p>
         </div>
 
-        {/* ✅ Google Sign Up */}
+        {/* Google */}
         <motion.button
           type="button"
           whileTap={{ scale: 0.97 }}
@@ -109,6 +122,7 @@ export default function SignUp() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Full Name */}
           <div className="grid gap-1 text-sm">
             <label className="text-white/80">Full Name</label>
             <input
@@ -120,6 +134,21 @@ export default function SignUp() {
             />
           </div>
 
+          {/* ✅ Mobile Number (MANDATORY) */}
+          <div className="grid gap-1 text-sm">
+            <label className="text-white/80">Mobile Number</label>
+            <input
+              className="w-full rounded-xl bg-white/[0.08] border border-white/10 px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-500/40"
+              placeholder="10-digit mobile number"
+              value={mobile}
+              onChange={(e) => setMobile(onlyDigits(e.target.value))}
+              maxLength={10}
+              inputMode="numeric"
+              required
+            />
+          </div>
+
+          {/* Email */}
           <div className="grid gap-1 text-sm">
             <label className="text-white/80">Email</label>
             <input
@@ -132,6 +161,7 @@ export default function SignUp() {
             />
           </div>
 
+          {/* Password */}
           <div className="grid gap-1 text-sm">
             <label className="text-white/80">Password</label>
             <input
@@ -164,7 +194,6 @@ export default function SignUp() {
           </p>
         </form>
 
-        {/* Footer */}
         <p className="mt-6 text-center text-[11px] text-white/45">
           By signing up, you agree to our{" "}
           <a href="/privacy" className="underline hover:text-white/70">
