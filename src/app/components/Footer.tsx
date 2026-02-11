@@ -3,7 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { FaEnvelope, FaPhoneAlt, FaWhatsapp } from "react-icons/fa";
+import {
+  FaEnvelope,
+  FaPhoneAlt,
+  FaWhatsapp,
+  FaInstagram,
+  FaFacebookF,
+  FaLinkedinIn,
+} from "react-icons/fa";
 
 export default function Footer() {
   return (
@@ -16,9 +23,8 @@ export default function Footer() {
       />
 
       <div className="relative mx-auto max-w-7xl px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
-        {/* Left section - logo and info */}
+        {/* Left section */}
         <div className="relative">
-          {/* 🔴 Neon red glow behind logo */}
           <motion.div
             className="absolute -top-6 -left-8 h-[150px] w-[150px] rounded-full bg-red-500/30 blur-2xl z-0"
             animate={{ opacity: [0.3, 0.7, 0.3], scale: [1, 1.1, 1] }}
@@ -26,8 +32,6 @@ export default function Footer() {
           />
 
           <div className="flex items-center gap-3 mb-4 relative z-10">
-            
-            {/* logo */}
             <Image
               src="/images/bg-logo.png"
               alt="Qratech Logo"
@@ -115,6 +119,7 @@ export default function Footer() {
             <FaEnvelope className="text-cyan-400" />
             <span>support@qratech.in</span>
           </div>
+
           <a
             href="tel:+919933309571"
             className="flex items-center gap-2 hover:text-cyan-300 transition"
@@ -123,15 +128,43 @@ export default function Footer() {
             <span>+91 9933309571</span>
           </a>
 
-          <div className="flex items-center gap-2">
+          <a
+            href="https://wa.me/919933309571"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 hover:text-green-400 transition"
+          >
+            <FaWhatsapp className="text-green-400" />
+            <span>+91-9933309571</span>
+          </a>
+
+          {/* Social icons */}
+          <div className="flex items-center gap-3 ml-0 sm:ml-4">
             <a
-              href="https://wa.me/919933309571"
+              href="https://www.instagram.com/qratech?igsh=MWZpbDhzaWdnYjV1OA=="
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 hover:text-green-400 transition"
+              className="bg-white/10 p-2 rounded-full hover:bg-pink-500/20 transition"
             >
-              <FaWhatsapp className="text-green-400" />
-              <span>+91-9933309571</span>
+              <FaInstagram />
+            </a>
+
+            <a
+              href="https://www.facebook.com/share/1KAXbhabyD/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/10 p-2 rounded-full hover:bg-blue-500/20 transition"
+            >
+              <FaFacebookF />
+            </a>
+
+            <a
+              href="https://www.linkedin.com/company/108400474/admin/dashboard/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/10 p-2 rounded-full hover:bg-blue-400/20 transition"
+            >
+              <FaLinkedinIn />
             </a>
           </div>
         </div>
