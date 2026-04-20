@@ -91,7 +91,7 @@ export default function PrivacyPage() {
             style={{ lineHeight: 1.15 }}
           >
             <span className="bg-gradient-to-b from-cyan-300 to-white bg-clip-text text-transparent">
-              Qratech Privacy Policy
+              Veyoscan Privacy Policy
             </span>
           </motion.h1>
 
@@ -100,7 +100,7 @@ export default function PrivacyPage() {
             className="mx-auto mt-4 max-w-2xl text-lg text-white/80"
           >
             We respect your privacy. This policy explains the data we collect,
-            how we use it, and the choices you have. It applies to qratech
+            how we use it, and the choices you have. It applies to Veyoscan
             products, websites, and services.
           </motion.p>
 
@@ -132,7 +132,7 @@ export default function PrivacyPage() {
 
           <SectionCard title="How We Use Data" icon={<FiKey size={20} />} delay={0.1}>
             <ul>
-              <li>Provide, operate, and improve Qratech features and reliability.</li>
+              <li>Provide, operate, and improve Veyoscan features and reliability.</li>
               <li>Authenticate users, secure accounts, and prevent fraud/abuse.</li>
               <li>Measure performance, diagnose issues, and run analytics.</li>
               <li>Process payments, subscriptions, and customer support requests.</li>
@@ -163,7 +163,7 @@ export default function PrivacyPage() {
           <SectionCard title="Data Sharing" icon={<FiGlobe size={20} />} delay={0.25}>
             <ul>
               <li><b>With Service Providers:</b> infrastructure, analytics, payments, support tools.</li>
-              <li><b>For Legal Reasons:</b> to comply with law, enforce terms, protect users and Qratech.</li>
+              <li><b>For Legal Reasons:</b> to comply with law, enforce terms, protect users and Veyoscan.</li>
               <li><b>Mergers/Acquisitions:</b> in corporate transactions, we’ll notify you of any material changes.</li>
               <li>We never sell your personal data.</li>
             </ul>
@@ -185,7 +185,7 @@ export default function PrivacyPage() {
               <li><b>Marketing Opt-Out:</b> unsubscribe from non-essential communications.</li>
             </ul>
             <p className="mt-2">
-              To exercise rights, contact us at <a className="text-cyan-300 underline" href="mailto:support@qratech.in">support@qratech.in</a>. 
+              To exercise rights, contact us at <a className="text-cyan-300 underline" href="mailto:support@veyoscan.com">support@veyoscan.com</a>. 
               We’ll verify and respond consistent with applicable laws (e.g., GDPR, CCPA/CPRA).
             </p>
           </SectionCard>
@@ -211,7 +211,7 @@ export default function PrivacyPage() {
 
           <SectionCard title="Children’s Privacy" icon={<FiAlertCircle size={20} />} delay={0.5}>
             <p>
-              Qratech is not directed to children under 13 (or equivalent minimum age in your region). 
+              Veyoscan is not directed to children under 13 (or equivalent minimum age in your region). 
               We do not knowingly collect data from children. If you believe a child provided data, 
               contact us to remove it.
             </p>
@@ -235,14 +235,14 @@ export default function PrivacyPage() {
             <div className="grid gap-2 sm:grid-cols-2">
               <div className="flex items-center gap-2">
                 <FiMail className="text-cyan-300" />
-                <a href="mailto:support@qratech.in" className="text-cyan-300 underline">
-                  support@qratech.in
+                <a href="mailto:support@veyoscan.com" className="text-cyan-300 underline">
+                  support@veyoscan.com
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <FiPhone className="text-cyan-300" />
-                <a href="tel:+91-9933309571" className="text-cyan-300 underline">
-                  +91-9933309571
+                <a href="tel:+91-8800625883" className="text-cyan-300 underline">
+                  +91-8800625883
                 </a>
               </div>
             </div>
@@ -254,7 +254,7 @@ export default function PrivacyPage() {
 
         {/* Footer note */}
         <motion.div {...fadeUp(0.75)} className="mt-10 text-center text-white/60">
-          Last Updated: {updatedAt} • © {new Date().getFullYear()} Qratech
+          Last Updated: {updatedAt} • © {new Date().getFullYear()} Veyoscan
         </motion.div>
       </div>
     </main>

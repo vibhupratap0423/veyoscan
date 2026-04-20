@@ -3,17 +3,17 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Order Your QR | QRatech",
-  description: "Choose your use-case and order a professional QR from QRatech.",
+  title: "Order Your QR | Veyoscan",
+  description: "Choose your use-case and order a professional QR from Veyoscan.",
 };
 
 const CARDS = [
-  { key: "vehicle",   title: "Vehicle QR",          desc: "Windshield / tank / helmet placement. Outdoor-grade & quick scan.", img: "/images/wrong parking.jpg" },
-  { key: "shop",      title: "Shop / Business QR",  desc: "Counter, door, banner — accept calls/messages and feedback instantly.", img: "/images/shop.png" },
-  { key: "personal",  title: "Personal QR",         desc: "Share your profile/contact with a single scan.", img: "/images/persnol.jpg" },
-  { key: "house",     title: "House / Society QR",  desc: "Visitor connect, emergency contact, security gate workflows.", img: "/images/house.jpg" },
-  { key: "event",     title: "Event / Ticket QR",   desc: "Check-in, access control & lead capture.", img: "/images/event.jpg" },
-  { key: "lostfound", title: "Lost & Found QR",     desc: "Mark items with a callback QR.", img: "/images/lost1.png" },
+  { key: "vehicle",   title: "Vehicle QR",          desc: "Windshield / tank / helmet placement. Outdoor-grade and quick scan.", img: "/images/wrong parking.jpg" },
+  { key: "shop",      title: "Shop / Business QR",  desc: "Counter, door, or banner — accept calls, messages, and feedback instantly.", img: "/images/shop.png" },
+  { key: "personal",  title: "Personal QR",         desc: "Share your profile or contact details with a single Veyoscan scan.", img: "/images/persnol.jpg" },
+  { key: "house",     title: "House / Society QR",  desc: "Visitor connect, emergency contact, and security gate workflows.", img: "/images/house.jpg" },
+  { key: "event",     title: "Event / Ticket QR",   desc: "Check-in, access control, and lead capture made easy.", img: "/images/event.jpg" },
+  { key: "lostfound", title: "Lost & Found QR",     desc: "Mark your items with a callback QR for faster recovery.", img: "/images/lost1.png" },
 ];
 
 export default function GetQrLanding() {
@@ -25,10 +25,10 @@ export default function GetQrLanding() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <header className="mb-8">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-              Order Your <span className="bg-gradient-to-r from-indigo-400 via-cyan-300 to-white bg-clip-text text-transparent">QR</span>
+              Order Your <span className="bg-gradient-to-r from-indigo-400 via-cyan-300 to-white bg-clip-text text-transparent">Veyoscan QR</span>
             </h1>
             <p className="mt-3 text-gray-300 max-w-2xl">
-              Select your category below. You’ll be taken to a short, type-specific form.
+              Select your category below. You’ll be taken to a short, type-specific Veyoscan order form.
             </p>
           </header>
 
@@ -48,7 +48,7 @@ export default function GetQrLanding() {
                       prefetch={false}
                       className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-300"
                     >
-                      Order QR
+                      Order Veyoscan QR
                     </Link>
                   </div>
                 </div>

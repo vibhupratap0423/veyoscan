@@ -250,7 +250,7 @@ export default function ScanCallPage({
       if (fErr) throw new Error(fErr.message);
 
       setInv((fresh as InvRow) ?? null);
-      setMsg("Activated successfully ✅ Now this QR is linked to your account.");
+      setMsg("Activated successfully ✅ Now this Veyoscan QR is linked to your account.");
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Activation failed");
     } finally {
@@ -270,7 +270,7 @@ export default function ScanCallPage({
       }
 
       if (inv?.code && !inv.assigned_to && inv.status === "available") {
-        setErr("Please activate this QR first to enable calls.");
+        setErr("Please activate this Veyoscan QR first to enable calls.");
         return;
       }
 
@@ -310,7 +310,7 @@ export default function ScanCallPage({
         setSid(parsed.exotel_call_sid ?? null);
         setMsg(
           mode === "owner"
-            ? "Connecting you to the vehicle owner… Please answer the incoming call."
+            ? "Connecting you to the Veyoscan QR owner… Please answer the incoming call."
             : "Connecting you to the emergency contact… Please answer the incoming call."
         );
         return;
@@ -341,7 +341,7 @@ export default function ScanCallPage({
               </div>
 
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-white">QRatech Scan</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-white">Veyoscan Scan</h1>
                 <p className="text-indigo-100 text-xs sm:text-sm mt-0.5">
                   {inv?.code ? "Activate & connect" : "Connect with owner"}
                 </p>
@@ -409,7 +409,7 @@ export default function ScanCallPage({
               <div className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4">
                 <div className="text-sm text-white font-semibold">Activate this QR</div>
                 <p className="mt-1 text-[11px] sm:text-xs text-slate-300">
-                  Login required. Activation links this sticker to your account.
+                  Login required. Activation links this Veyoscan sticker to your account.
                 </p>
 
                 <button
@@ -448,7 +448,7 @@ export default function ScanCallPage({
               </label>
 
               <div className="text-[11px] sm:text-xs text-slate-400 bg-slate-800/30 rounded-lg p-2.5 sm:p-3">
-                QRatech will call your number first, then connect you securely
+                Veyoscan will call your number first, then connect you securely
                 (masked) to the owner or emergency contact.
               </div>
             </div>

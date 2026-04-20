@@ -70,7 +70,7 @@ export default function ResetPasswordClient() {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
 
-      setMsg("Password updated ✅ Redirecting...");
+      setMsg("Veyoscan password updated ✅ Redirecting...");
       setTimeout(() => router.replace("/auth/sign-in"), 900);
     } catch (e: unknown) {
       setErr(getErrMessage(e));
@@ -84,9 +84,9 @@ export default function ResetPasswordClient() {
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl p-8 space-y-6">
         <div className="space-y-1 text-center">
           <h1 className="text-3xl font-semibold tracking-tight text-white">
-            Reset Password
+            Reset Veyoscan Password
           </h1>
-          <p className="text-sm text-slate-400">Set your new password.</p>
+          <p className="text-sm text-slate-400">Set your new Veyoscan account password.</p>
         </div>
 
         {!ready ? (

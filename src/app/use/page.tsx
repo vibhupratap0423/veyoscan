@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import {
   FiAlertTriangle,
   FiTruck,
@@ -13,6 +13,14 @@ import {
   FiVolumeX,
 } from "react-icons/fi";
 
+type UseCase = {
+  title: string;
+  icon: React.ReactNode;
+  desc: string;
+  video?: string;
+  img?: string;
+};
+
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 40 },
   whileInView: { opacity: 1, y: 0 },
@@ -20,7 +28,17 @@ const fadeUp = (delay = 0) => ({
   transition: { duration: 0.7, delay },
 });
 
-export default function UseCasesPage() {
+/** ✅ Component (same UI/behavior) */
+export default function VeyoscanUseCases({
+  useCases,
+  title = "Real-Life Use Cases of Veyoscan",
+  subtitle = `Transforming everyday situations into safer, smarter, and more connected experiences —
+from emergencies to simple parking interactions.`,
+}: {
+  useCases?: UseCase[];
+  title?: string;
+  subtitle?: string;
+}) {
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -32,38 +50,43 @@ export default function UseCasesPage() {
     }
   };
 
-  const useCases = [
-    {
-      title: "Emergency Assistance",
-      icon: <FiAlertTriangle className="text-cyan-300" size={24} />,
-      desc: "A tragic accident occurs on the road. A bystander scans the vehicle’s QR tag and instantly connects with the driver’s family or emergency contact — saving crucial minutes.",
-      video: "/images/vedio1.mp4", // 🎥 place inside /public/videos
-    },
-    {
-      title: "Parking Conflict",
-      icon: <FiTruck className="text-cyan-300" size={24} />,
-      desc: "Someone accidentally parks behind your car. Instead of honking or wasting time, they simply scan your QR code and send a polite message or call instantly.",
-      img: "/images/wrong parking.jpg",
-    },
-    {
-      title: "Lost Belongings",
-      icon: <FiPhoneCall className="text-cyan-300" size={24} />,
-      desc: "You left your phone, wallet, or helmet in a café. The finder scans your QR tag and reaches you without needing to reveal personal numbers or apps.",
-      img: "/images/lost1.png",
-    },
-    {
-      title: "Community Safety",
-      icon: <FiUsers className="text-cyan-300" size={24} />,
-      desc: "Neighborhood watch or local groups can use Qratech stickers on gates, bikes, and devices — building quick, private communication between citizens and owners.",
-      img: "/images/home.jpg",
-    },
-    {
-      title: "Medical Emergency",
-      icon: <FiHeart className="text-cyan-300" size={24} />,
-      desc: "A patient’s health QR tag shows blood group, emergency number, and allergy info — allowing faster first aid and accurate hospital coordination.",
-      img: "/images/emergency.jpg",
-    },
-  ];
+  const defaultUseCases: UseCase[] = useMemo(
+    () => [
+      {
+        title: "Emergency Assistance",
+        icon: <FiAlertTriangle className="text-cyan-300" size={24} />,
+        desc: "A tragic accident occurs on the road. A bystander scans the vehicle’s Veyoscan QR tag and instantly connects with the driver’s family or emergency contact — saving crucial minutes.",
+        video: "/images/vedio1.mp4",
+      },
+      {
+        title: "Parking Conflict",
+        icon: <FiTruck className="text-cyan-300" size={24} />,
+        desc: "Someone accidentally parks behind your car. Instead of honking or wasting time, they simply scan your Veyoscan QR code and send a polite message or call instantly.",
+        img: "/images/wrong parking.jpg",
+      },
+      {
+        title: "Lost Belongings",
+        icon: <FiPhoneCall className="text-cyan-300" size={24} />,
+        desc: "You left your phone, wallet, or helmet in a café. The finder scans your Veyoscan QR tag and reaches you without needing to reveal personal numbers or apps.",
+        img: "/images/lost2.png",
+      },
+      {
+        title: "Community Safety",
+        icon: <FiUsers className="text-cyan-300" size={24} />,
+        desc: "Neighborhood watch or local groups can use Veyoscan stickers on gates, bikes, and devices — building quick, private communication between citizens and owners.",
+        img: "/images/home.jpg",
+      },
+      {
+        title: "Medical Emergency",
+        icon: <FiHeart className="text-cyan-300" size={24} />,
+        desc: "A patient’s Veyoscan health QR tag shows blood group, emergency number, and allergy info — allowing faster first aid and accurate hospital coordination.",
+        img: "/images/emergency.jpg",
+      },
+    ],
+    []
+  );
+
+  const items = useCases ?? defaultUseCases;
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#0a0f1a] text-white">
@@ -78,18 +101,17 @@ export default function UseCasesPage() {
       <section className="relative mx-auto max-w-5xl px-6 pt-20 pb-12 text-center">
         <h1 className="text-4xl sm:text-5xl font-black tracking-[-0.02em] leading-tight">
           <span className="bg-gradient-to-b from-cyan-300 to-white bg-clip-text text-transparent">
-            Real-Life Use Cases of Qratech
+            {title}
           </span>
         </h1>
         <p className="mt-4 text-lg text-white/80 max-w-2xl mx-auto">
-          Transforming everyday situations into safer, smarter, and more connected experiences —
-          from emergencies to simple parking interactions.
+          {subtitle}
         </p>
       </section>
 
       {/* Use Cases */}
       <section className="relative mx-auto max-w-7xl px-6 pb-20 space-y-32">
-        {useCases.map((u, i) => (
+        {items.map((u, i) => (
           <motion.div
             key={u.title}
             {...fadeUp(i * 0.1)}
@@ -118,6 +140,7 @@ export default function UseCasesPage() {
                   <button
                     onClick={toggleMute}
                     className="absolute bottom-3 right-3 p-3 bg-black/60 rounded-full border border-cyan-400/30 hover:bg-cyan-400/20 transition"
+                    type="button"
                   >
                     {isMuted ? (
                       <FiVolumeX className="text-white" size={18} />

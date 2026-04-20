@@ -94,24 +94,24 @@ const PACKS: Record<
     title: "Economy Pack",
     purchaseRupee: 399,
     renewalRupee: 199,
-    tagline: "Great for personal use",
+    tagline: "Great for personal Veyoscan use",
   },
   premium: {
     title: "Premium Pack",
     purchaseRupee: 699,
     renewalRupee: 299,
-    tagline: "Best for businesses & customization",
+    tagline: "Best for businesses, branding, and customization",
   },
 };
 
 const ORDER_TYPES: Array<{ key: OrderTypeKey; label: string; hint: string }> = [
-  { key: "vehicle", label: "Vehicle QR", hint: "For cars, bikes, helmets, parking." },
-  { key: "shop", label: "Shop / Business QR", hint: "For storefronts, counters & banners." },
-  { key: "personal", label: "Personal QR", hint: "Share contact/profile in one scan." },
-  { key: "house", label: "House / Society QR", hint: "For gates, visitors, emergency info." },
-  { key: "event", label: "Event / Ticket QR", hint: "Check-ins & access control." },
-  { key: "lost", label: "Lost & Found QR", hint: "For bags, gadgets, valuables." },
-  { key: "other", label: "Other", hint: "Custom label (pet, bag, etc.)" },
+  { key: "vehicle", label: "Vehicle QR", hint: "For cars, bikes, helmets, parking, and roadside contact." },
+  { key: "shop", label: "Shop / Business QR", hint: "For storefronts, counters, kiosks, and branded displays." },
+  { key: "personal", label: "Personal QR", hint: "Share your contact or profile through one Veyoscan scan." },
+  { key: "house", label: "House / Society QR", hint: "For gates, visitors, emergency access, and residential info." },
+  { key: "event", label: "Event / Ticket QR", hint: "For check-ins, attendance, access control, and events." },
+  { key: "lost", label: "Lost & Found QR", hint: "For bags, gadgets, wallets, helmets, and valuables." },
+  { key: "other", label: "Other", hint: "Create a custom Veyoscan use case." },
 ];
 
 const ECONOMY_DELIVERY_FEE = 40;
@@ -139,7 +139,7 @@ function Label({
   required?: boolean;
 }) {
   return (
-    <label className="text-sm text-white/70">
+    <label className="text-sm font-medium text-white/75">
       {children}
       {required ? <span className="ml-1 text-rose-400">*</span> : null}
     </label>
@@ -151,9 +151,9 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
     <input
       {...props}
       className={[
-        "w-full rounded-2xl border border-white/10 bg-[#0b1220] px-4 py-3",
-        "text-white outline-none placeholder:text-white/35",
-        "focus:ring-2 focus:ring-indigo-500/40",
+        "w-full rounded-2xl border border-white/10 bg-[#09111f]/90 px-4 py-3.5",
+        "text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] outline-none placeholder:text-white/30",
+        "transition duration-200 focus:border-cyan-400/35 focus:ring-2 focus:ring-cyan-400/20",
         props.className || "",
       ].join(" ")}
     />
@@ -165,8 +165,9 @@ function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
     <select
       {...props}
       className={[
-        "w-full rounded-2xl border border-white/10 bg-[#0b1220] px-4 py-3",
-        "text-white outline-none focus:ring-2 focus:ring-indigo-500/40",
+        "w-full rounded-2xl border border-white/10 bg-[#09111f]/90 px-4 py-3.5",
+        "text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] outline-none transition duration-200",
+        "focus:border-cyan-400/35 focus:ring-2 focus:ring-cyan-400/20",
         props.className || "",
       ].join(" ")}
     />
@@ -189,25 +190,26 @@ function ChoiceCard({
       type="button"
       onClick={onClick}
       className={[
-        "w-full rounded-2xl border p-4 text-left transition",
-        "min-h-[86px] flex items-start justify-between gap-3",
+        "group relative w-full overflow-hidden rounded-2xl border p-4 text-left transition-all duration-200",
+        "min-h-[90px] flex items-start justify-between gap-3",
         selected
-          ? "border-indigo-400/50 bg-indigo-500/10 shadow-[0_0_0_4px_rgba(79,70,229,0.12)]"
-          : "border-white/10 bg-white/5 hover:bg-white/10",
+          ? "border-cyan-400/45 bg-gradient-to-br from-cyan-500/12 to-indigo-500/12 shadow-[0_0_0_4px_rgba(34,211,238,0.10)]"
+          : "border-white/10 bg-white/[0.04] hover:border-white/20 hover:bg-white/[0.07]",
       ].join(" ")}
     >
-      <div>
+      <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.07),transparent_35%)]" />
+      <div className="relative">
         <p className="text-sm sm:text-base font-semibold text-white">{title}</p>
-        <p className="mt-1 text-[11px] sm:text-xs text-white/60">{sub}</p>
+        <p className="mt-1 text-[11px] sm:text-xs leading-5 text-white/60">{sub}</p>
       </div>
       <div
         className={[
-          "mt-1 h-5 w-5 rounded-full border flex items-center justify-center shrink-0",
-          selected ? "border-indigo-400/70" : "border-white/25",
+          "relative mt-1 h-5 w-5 rounded-full border flex items-center justify-center shrink-0",
+          selected ? "border-cyan-400/70 bg-cyan-400/10" : "border-white/20",
         ].join(" ")}
         aria-hidden
       >
-        {selected ? <span className="h-2.5 w-2.5 rounded-full bg-indigo-400" /> : null}
+        {selected ? <span className="h-2.5 w-2.5 rounded-full bg-cyan-300" /> : null}
       </div>
     </button>
   );
@@ -227,19 +229,19 @@ function QuantityStepper({
   const v = clampInt(value, min, max);
 
   return (
-    <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-[#0b1220] px-2 py-2">
+    <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-[#09111f]/90 px-2 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
       <button
         type="button"
         onClick={() => onChange(clampInt(v - 1, min, max))}
         disabled={v <= min}
-        className="h-11 w-11 rounded-xl border border-white/10 bg-white/5 text-white/90 hover:bg-white/10 disabled:opacity-40"
+        className="h-11 w-11 rounded-xl border border-white/10 bg-white/[0.04] text-lg text-white/90 transition hover:bg-white/[0.08] disabled:opacity-40"
         aria-label="Decrease quantity"
       >
         −
       </button>
 
       <div className="flex-1 px-2">
-        <div className="text-center text-white font-semibold">{v}</div>
+        <div className="text-center text-lg font-semibold text-white">{v}</div>
         <div className="mt-0.5 text-center text-[10px] text-white/45">
           Min {min}, Max {max}
         </div>
@@ -249,7 +251,7 @@ function QuantityStepper({
         type="button"
         onClick={() => onChange(clampInt(v + 1, min, max))}
         disabled={v >= max}
-        className="h-11 w-11 rounded-xl border border-white/10 bg-white/5 text-white/90 hover:bg-white/10 disabled:opacity-40"
+        className="h-11 w-11 rounded-xl border border-white/10 bg-white/[0.04] text-lg text-white/90 transition hover:bg-white/[0.08] disabled:opacity-40"
         aria-label="Increase quantity"
       >
         +
@@ -295,7 +297,6 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
 
   const qty = useMemo(() => clampInt(quantity, 1, 99), [quantity]);
 
-  // ✅ NEW: Economy delivery charge only
   const deliveryCharge = useMemo(
     () => (packKey === "economy" ? ECONOMY_DELIVERY_FEE : 0),
     [packKey]
@@ -303,7 +304,6 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
 
   const subTotal = useMemo(() => PACKS[packKey].purchaseRupee * qty, [packKey, qty]);
 
-  // ✅ Payable includes delivery (only for economy)
   const totalAmount = useMemo(() => subTotal + deliveryCharge, [subTotal, deliveryCharge]);
 
   const canSubmit = useMemo(() => {
@@ -330,7 +330,7 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
 
       const user = auth?.user;
       if (!user) {
-        setErr("Please sign in to place an order.");
+        setErr("Please sign in to place your Veyoscan order.");
         setLoading(false);
         return;
       }
@@ -434,8 +434,6 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
         qrOrderId: orderId,
         pack: packKey,
         quantity: qty,
-        // ✅ Optional: if your backend supports it, it can use this for economy delivery.
-        // If backend ignores unknown fields, it won't break anything.
         deliveryChargeRupee: deliveryCharge,
       }),
     });
@@ -461,7 +459,7 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
       key: keyId,
       amount: String(amountPaise),
       currency: "INR",
-      name: "QRatech",
+      name: "Veyoscan",
       description:
         deliveryCharge > 0
           ? `${PACKS[packKey].title} • Qty ${qty} • Delivery Charges ${formatINR(deliveryCharge)}`
@@ -472,7 +470,7 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
         email: email,
         contact: onlyDigits(phone),
       },
-      theme: { color: "#4f46e5" },
+      theme: { color: "#22d3ee" },
       handler: async (response: RazorpaySuccessResponse) => {
         try {
           const r2 = await fetch("/api/razorpay/verify", {
@@ -493,11 +491,11 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
           if (!r2.ok || !j2?.ok) throw new Error(j2?.error || "Payment verification failed.");
 
           openModal(
-            "Order placed successfully.\nA confirmation email will be sent shortly.\nRedirecting to Get QR…"
+            "Your Veyoscan order has been placed successfully.\nA confirmation email will be sent shortly.\nRedirecting to Get QR…"
           );
         } catch {
           openModal(
-            "Payment completed, but verification failed.\nPlease contact support.\nRedirecting to Get QR…"
+            "Payment completed, but verification failed.\nPlease contact Veyoscan support.\nRedirecting to Get QR…"
           );
         }
       },
@@ -523,7 +521,7 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
 
       if (paymentMethod === "cod") {
         openModal(
-          `Order placed successfully.\nPayment method: Cash on Delivery.\n${
+          `Your Veyoscan order has been placed successfully.\nPayment method: Cash on Delivery.\n${
             deliveryCharge > 0
               ? `Delivery Charges: ${formatINR(deliveryCharge)}\n`
               : "Delivery: Free\n"
@@ -543,23 +541,33 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
   if (loading) return <div className="p-6 text-center text-white/70">Loading…</div>;
 
   return (
-    <div className="w-full">
-      {/* container */}
+    <div className="relative w-full">
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-16 left-[12%] h-72 w-72 rounded-full bg-cyan-500/12 blur-3xl" />
+        <div className="absolute top-1/3 right-[6%] h-80 w-80 rounded-full bg-indigo-500/12 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-sky-400/8 blur-3xl" />
+      </div>
+
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:gap-10 lg:grid-cols-12">
           {/* LEFT: FORM */}
           <div className="lg:col-span-8">
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-8">
+            <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-8">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-white">Place QR Order</h2>
-                  <p className="mt-2 text-sm text-white/65">
-                    Enter delivery and contact details. A confirmation email will be sent after successful
-                    order placement.
+                  <span className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-cyan-200">
+                    Veyoscan Secure Order
+                  </span>
+                  <h2 className="mt-4 text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                    Place Your Veyoscan QR Order
+                  </h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-white/65">
+                    Fill in your contact and delivery details to place your Veyoscan order.
+                    After successful order placement, a confirmation email will be sent to your account.
                   </p>
                 </div>
-                <span className="hidden sm:inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
-                  Secure Checkout
+                <span className="hidden sm:inline-flex rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/70">
+                  Protected Checkout
                 </span>
               </div>
 
@@ -570,15 +578,17 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
               )}
 
               {/* Package */}
-              <div className="mt-8">
+              <div className="mt-8 rounded-[24px] border border-white/8 bg-black/15 p-5 sm:p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">Package</h3>
-                    <p className="mt-1 text-xs sm:text-sm text-white/60">Choose a plan for your QR sticker.</p>
+                    <h3 className="text-base sm:text-lg font-semibold text-white">Choose Package</h3>
+                    <p className="mt-1 text-xs sm:text-sm text-white/60">
+                      Select the right Veyoscan plan for your QR sticker order.
+                    </p>
                   </div>
                 </div>
 
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <ChoiceCard
                     title="Economy"
                     sub="₹399 purchase • ₹199/year renewal • +₹40 delivery"
@@ -596,13 +606,15 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
 
               {/* Type + Size + Quantity */}
               <div className="mt-8 grid gap-6 lg:grid-cols-2">
-                <div>
+                <div className="rounded-[24px] border border-white/8 bg-black/15 p-5 sm:p-6">
                   <div className="AssistanceTitle">
                     <h3 className="text-base sm:text-lg font-semibold text-white">Order Type</h3>
-                    <p className="mt-1 text-xs sm:text-sm text-white/60">Select where the QR will be used.</p>
+                    <p className="mt-1 text-xs sm:text-sm text-white/60">
+                      Select where your Veyoscan QR will be used.
+                    </p>
                   </div>
 
-                  <div className="mt-3 grid gap-3">
+                  <div className="mt-4 grid gap-3">
                     <Select
                       value={orderType}
                       onChange={(e) => setOrderType(e.target.value as OrderTypeKey)}
@@ -614,7 +626,7 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
                       ))}
                     </Select>
 
-                    <p className="text-xs text-white/55">
+                    <p className="text-xs leading-5 text-white/55">
                       {ORDER_TYPES.find((x) => x.key === orderType)?.hint ?? ""}
                     </p>
 
@@ -632,10 +644,10 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
                 </div>
 
                 <div className="grid gap-6">
-                  <div>
+                  <div className="rounded-[24px] border border-white/8 bg-black/15 p-5 sm:p-6">
                     <h3 className="text-base sm:text-lg font-semibold text-white">Size</h3>
-                    <p className="mt-1 text-xs sm:text-sm text-white/60">Sticker size selection.</p>
-                    <div className="mt-3">
+                    <p className="mt-1 text-xs sm:text-sm text-white/60">Choose your preferred sticker size.</p>
+                    <div className="mt-4">
                       <Select value={size} onChange={(e) => setSize(e.target.value as SizeType)}>
                         <option value="small" style={{ backgroundColor: "#0b1220" }}>
                           Small
@@ -650,10 +662,10 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
                     </div>
                   </div>
 
-                  <div>
+                  <div className="rounded-[24px] border border-white/8 bg-black/15 p-5 sm:p-6">
                     <h3 className="text-base sm:text-lg font-semibold text-white">Quantity</h3>
-                    <p className="mt-1 text-xs sm:text-sm text-white/60">Use + / − to update quantity.</p>
-                    <div className="mt-3">
+                    <p className="mt-1 text-xs sm:text-sm text-white/60">Use the stepper to adjust your order quantity.</p>
+                    <div className="mt-4">
                       <QuantityStepper value={qty} min={1} max={99} onChange={setQuantity} />
                     </div>
                   </div>
@@ -661,10 +673,10 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
               </div>
 
               {/* Contact */}
-              <div className="mt-10">
-                <h3 className="text-base sm:text-lg font-semibold text-white">Contact</h3>
+              <div className="mt-10 rounded-[24px] border border-white/8 bg-black/15 p-5 sm:p-6">
+                <h3 className="text-base sm:text-lg font-semibold text-white">Contact Details</h3>
                 <p className="mt-1 text-xs sm:text-sm text-white/60">
-                  We may contact you for delivery updates.
+                  Veyoscan may contact you regarding order confirmation and delivery updates.
                 </p>
 
                 <div className="mt-4 grid gap-5 sm:grid-cols-2">
@@ -673,7 +685,7 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
                     <Input
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Your name"
+                      placeholder="Your full name"
                     />
                   </div>
 
@@ -682,7 +694,7 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
                     <Input
                       value={phone}
                       onChange={(e) => setPhone(onlyDigits(e.target.value))}
-                      placeholder="10-digit mobile"
+                      placeholder="10-digit mobile number"
                       inputMode="numeric"
                       maxLength={10}
                     />
@@ -693,7 +705,7 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
                     <Input
                       value={altPhone}
                       onChange={(e) => setAltPhone(onlyDigits(e.target.value))}
-                      placeholder="Optional"
+                      placeholder="Optional alternate number"
                       inputMode="numeric"
                       maxLength={10}
                     />
@@ -707,9 +719,9 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
               </div>
 
               {/* Address */}
-              <div className="mt-10">
-                <h3 className="text-base sm:text-lg font-semibold text-white">Address</h3>
-                <p className="mt-1 text-xs sm:text-sm text-white/60">Delivery address for your order.</p>
+              <div className="mt-10 rounded-[24px] border border-white/8 bg-black/15 p-5 sm:p-6">
+                <h3 className="text-base sm:text-lg font-semibold text-white">Delivery Address</h3>
+                <p className="mt-1 text-xs sm:text-sm text-white/60">Enter the address where your Veyoscan QR order should be delivered.</p>
 
                 <div className="mt-4 grid gap-5">
                   <div className="grid gap-2">
@@ -755,14 +767,16 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
               </div>
 
               {/* Payment */}
-              <div className="mt-10">
-                <h3 className="text-base sm:text-lg font-semibold text-white">Payment</h3>
-                <p className="mt-1 text-xs sm:text-sm text-white/60">Choose one method to complete your order.</p>
+              <div className="mt-10 rounded-[24px] border border-white/8 bg-black/15 p-5 sm:p-6">
+                <h3 className="text-base sm:text-lg font-semibold text-white">Payment Method</h3>
+                <p className="mt-1 text-xs sm:text-sm text-white/60">
+                  Choose how you want to complete your Veyoscan order.
+                </p>
 
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <ChoiceCard
                     title="Cash on Delivery"
-                    sub="Pay when delivered"
+                    sub="Pay when your Veyoscan order is delivered"
                     selected={paymentMethod === "cod"}
                     onClick={() => setPaymentMethod("cod")}
                   />
@@ -778,13 +792,13 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
               {/* CTA */}
               <div className="mt-10 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-xs text-white/45">
-                  By placing the order, you agree to receive confirmation via email/phone.
+                  By placing this order, you agree to receive Veyoscan confirmation and delivery updates via email or phone.
                 </p>
 
                 <button
                   onClick={() => void submit()}
                   disabled={!canSubmit || busy}
-                  className="w-full sm:w-auto rounded-2xl bg-white px-7 py-3 font-semibold text-black hover:bg-white/90 disabled:opacity-60"
+                  className="w-full sm:w-auto rounded-2xl bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-500 px-7 py-3 font-semibold text-black shadow-[0_12px_30px_rgba(34,211,238,0.25)] transition hover:opacity-95 disabled:opacity-60"
                 >
                   {busy ? "Processing…" : paymentMethod === "online" ? "Pay & Place Order" : "Place Order"}
                 </button>
@@ -794,10 +808,15 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
 
           {/* RIGHT: SUMMARY */}
           <div className="lg:col-span-4">
-            <div className="lg:sticky lg:top-24 rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
-              <p className="text-sm text-white/70">Order Summary</p>
+            <div className="lg:sticky lg:top-24 rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.32)] backdrop-blur-xl sm:p-6">
+              <div className="mb-4">
+                <span className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-cyan-200">
+                  Summary
+                </span>
+                <p className="mt-3 text-sm text-white/70">Veyoscan Order Summary</p>
+              </div>
 
-              <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-5">
+              <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
                 <p className="text-lg font-semibold text-white">{PACKS[packKey].title}</p>
                 <p className="mt-1 text-xs text-white/55">{PACKS[packKey].tagline}</p>
 
@@ -818,9 +837,11 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
                   </span>
                 </div>
 
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-sm text-white/70">Payable</span>
-                  <span className="text-3xl font-extrabold text-white">{formatINR(totalAmount)}</span>
+                <div className="mt-4 rounded-2xl border border-cyan-400/15 bg-cyan-400/5 p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-white/70">Payable</span>
+                    <span className="text-3xl font-extrabold tracking-tight text-white">{formatINR(totalAmount)}</span>
+                  </div>
                 </div>
 
                 <div className="mt-4 text-xs text-white/55">
@@ -837,13 +858,17 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
                   {ORDER_TYPES.find((x) => x.key === orderType)?.label ?? "—"}
                   {orderType === "other" && otherType.trim() ? ` — ${otherType.trim()}` : ""}
                 </p>
-                <p className="mt-2 text-xs text-white/55">After success, you will be redirected to Get QR.</p>
+                <p className="mt-2 text-xs text-white/55">
+                  After order success, you will be redirected to Get QR.
+                </p>
               </div>
 
               <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-5">
                 <p className="text-sm font-semibold text-white">Account Email</p>
-                <p className="mt-2 text-sm text-white/80 break-all">{email || "—"}</p>
-                <p className="mt-2 text-xs text-white/55">Confirmation updates will be sent here.</p>
+                <p className="mt-2 break-all text-sm text-white/80">{email || "—"}</p>
+                <p className="mt-2 text-xs text-white/55">
+                  Veyoscan confirmation updates will be sent here.
+                </p>
               </div>
             </div>
           </div>
@@ -853,15 +878,16 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
       {/* Success Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70" onClick={() => setModalOpen(false)} />
-          <div className="relative w-full max-w-md rounded-3xl border border-white/10 bg-[#0b1220] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
+          <div className="relative w-full max-w-md overflow-hidden rounded-[28px] border border-white/10 bg-[#0b1220] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.6)]">
+            <div className="pointer-events-none absolute -top-10 right-0 h-28 w-28 rounded-full bg-cyan-500/15 blur-3xl" />
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-lg font-semibold text-white">Success</p>
-                <p className="mt-2 whitespace-pre-line text-sm text-white/80">{modalText}</p>
+                <p className="mt-2 whitespace-pre-line text-sm leading-6 text-white/80">{modalText}</p>
               </div>
               <button
-                className="rounded-lg border border-white/10 px-2 py-1 text-white/80 hover:bg-white/5"
+                className="rounded-lg border border-white/10 px-2 py-1 text-white/80 transition hover:bg-white/5"
                 onClick={() => setModalOpen(false)}
               >
                 ✕
@@ -870,7 +896,7 @@ export default function OrderForm({ type, pack }: OrderFormProps) {
 
             <div className="mt-5 flex items-center justify-end">
               <button
-                className="rounded-2xl bg-white px-4 py-2 font-semibold text-black hover:bg-white/90"
+                className="rounded-2xl bg-gradient-to-r from-cyan-400 to-indigo-500 px-4 py-2 font-semibold text-black transition hover:opacity-95"
                 onClick={() => router.push("/get-qr")}
               >
                 Go to Get QR

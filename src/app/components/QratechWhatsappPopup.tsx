@@ -15,7 +15,7 @@ type Props = {
 export default function QratechWhatsappPopup({
   open,
   onClose,
-  businessPhone = '919933309571',
+  businessPhone = '918800625883',
   title = 'Get Your QR',
   subtitle = 'Enter details and we’ll connect on WhatsApp.',
 }: Props) {

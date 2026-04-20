@@ -28,7 +28,7 @@ export default function ContactsPage() {
 
   function toWhatsAppText(f: FormState) {
     return [
-      "📞 *Qratech Contact Request*",
+      "📞 *Veyoscan Contact Request*",
       `• Name: ${f.fullName || "-"}`,
       `• Email: ${f.email || "-"}`,
       `• Phone: ${f.phone || "-"}`,
@@ -51,7 +51,7 @@ export default function ContactsPage() {
       alert("Please enter your name and phone number.");
       return;
     }
-    const phoneE164 = "919933309571";
+    const phoneE164 = "918800625883";
     const text = encodeURIComponent(toWhatsAppText(form));
     window.open(`https://wa.me/${phoneE164}?text=${text}`, "_blank");
 
@@ -70,11 +70,11 @@ export default function ContactsPage() {
       <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-12 pb-8 text-center">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-200">
-            Qratech Support
+            Veyoscan Support
           </div>
           <h1 className="mt-3 text-3xl sm:text-4xl font-semibold">Contact Us</h1>
           <p className="mt-2 text-white/70 max-w-2xl mx-auto">
-            From bulk QR deployments to partnership contracts—our team is here to help.
+            From bulk Veyoscan QR deployments to partnership contracts—our team is here to help.
           </p>
         </div>
       </section>
@@ -86,25 +86,25 @@ export default function ContactsPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-1 gap-4">
             <QuickCard
               title="Bulk QR Orders"
-              desc="Order thousands of branded QR tags with tracking."
+              desc="Order Veyoscan QR tags in bulk with tracking and branding support."
               badge="Priority"
               onClick={() => handleChange("topic", "bulk-qr")}
             />
             <QuickCard
               title="Contracts & Partnerships"
-              desc="Partner with us—OEMs, enterprises & channels."
+              desc="Partner with Veyoscan for enterprise, channel, or collaboration opportunities."
               badge="Legal"
               onClick={() => handleChange("topic", "contract")}
             />
             <QuickCard
               title="Helpline / Support"
-              desc="Account, device, or dashboard help."
+              desc="Get help with your account, QR setup, activation, or dashboard."
               badge="Live"
               onClick={() => handleChange("topic", "helpline")}
             />
             <QuickCard
               title="Report Fraud / Payments"
-              desc="Flag suspicious scans or payment issues."
+              desc="Report suspicious scans, payment issues, or misuse related to Veyoscan."
               badge="Safe"
               onClick={() => handleChange("topic", "fraud")}
             />
@@ -140,7 +140,7 @@ export default function ContactsPage() {
                   type="tel"
                   value={form.phone}
                   onChange={(v) => handleChange("phone", v)}
-                  placeholder="+91 98xxxxxx"
+                  placeholder="+91 88xxxxxx83"
                   autoComplete="tel"
                 />
                 <Select
@@ -172,12 +172,12 @@ export default function ContactsPage() {
                 <span className="text-xs text-white/50">
                   You can also reach us at{" "}
                   <a
-                    href="https://wa.me/919933309571"
+                    href="https://wa.me/918800625883"
                     target="_blank"
                     rel="noreferrer"
                     className="text-cyan-300 hover:underline"
                   >
-                    +91 9933309571
+                    +91 8800625883
                   </a>
                   .
                 </span>
@@ -190,10 +190,10 @@ export default function ContactsPage() {
         <div className="mt-10 grid md:grid-cols-3 gap-4">
           <InfoTile
             title="Email"
-            content={<a className="hover:underline" href="mailto:support@qratech.app">support@qratech.in</a>}
+            content={<a className="hover:underline" href="mailto:support@veyoscan.com">support@veyoscan.com</a>}
           />
-          <InfoTile title="Helpline" content={<span>+91-9933309571 (09:00–18:00 IST)</span>} />
-          <InfoTile title="Address" content={<span>Pune — Qratech HQ</span>} />
+          <InfoTile title="Helpline" content={<span>+91-8800625883 (09:00–18:00 IST)</span>} />
+          <InfoTile title="Address" content={<span>Veyoscan Support Desk, India</span>} />
         </div>
       </section>
     </main>

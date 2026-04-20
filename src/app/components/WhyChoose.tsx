@@ -198,7 +198,7 @@ export default function WhyChoose() {
             className="text-4xl sm:text-5xl font-black"
           >
             <span className="bg-gradient-to-b from-cyan-300 to-white bg-clip-text text-transparent">
-              Why Choose Qratech?
+              Why Choose Veyoscan?
             </span>
           </motion.h2>
           <p className="mx-auto mt-4 max-w-3xl text-lg text-white/80 leading-relaxed">

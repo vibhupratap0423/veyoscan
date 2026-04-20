@@ -112,10 +112,10 @@ function Step({
 
       {/* icon box */}
       <div className="mx-auto mb-6 flex h-[96px] w-[96px] items-center justify-center rounded-2xl border border-cyan-400/40 bg-[#0c1424] shadow-[0_0_20px_rgba(34,211,238,0.1)]">
-  {icon === "scan" && <ScanIcon />}
-  {icon === "link" && <LinkIcon />}
-  {icon === "chat" && <ChatIcon />}
-</div>
+        {icon === "scan" && <ScanIcon />}
+        {icon === "link" && <LinkIcon />}
+        {icon === "chat" && <ChatIcon />}
+      </div>
 
       <h3 className="text-2xl font-extrabold tracking-[-0.02em] text-cyan-300">{title}</h3>
       <p className="mx-auto mt-4 max-w-md text-white/80 leading-relaxed">{desc}</p>
@@ -151,7 +151,7 @@ export default function HowItWorks() {
           />
           <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.02em]">
             <span className="bg-gradient-to-b from-cyan-300 to-white bg-clip-text text-transparent">
-              How Qratech Works
+              How Veyoscan Works
             </span>
           </h2>
           <p className="mx-auto mt-4 max-w-3xl text-lg text-white/80 leading-relaxed">
@@ -165,7 +165,7 @@ export default function HowItWorks() {
             step={1}
             icon="scan"
             title="Scan QR Code"
-            desc="Point your smartphone camera at any Qratech QR. No special app needed — works with any standard camera on iOS or Android."
+            desc="Point your smartphone camera at any Veyoscan QR. No special app needed — works with any standard camera on iOS or Android."
             delay={0}
           />
           <Step

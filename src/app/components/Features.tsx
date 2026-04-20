@@ -101,22 +101,22 @@ function FeatureCard({
 export default function Features() {
   const featuresTop = [
     {
-      title: "QR Calling",
+      title: "Veyoscan QR Calling",
       icon: "phone" as const,
       desc:
-        "Scan any QR code to instantly connect with the owner. No phone numbers needed, no apps required.",
+        "Scan any Veyoscan QR to instantly connect with the owner. No phone numbers needed and no app required.",
     },
     {
       title: "Real-time Notifications",
       icon: "bell" as const,
       desc:
-        "Get instant alerts when someone scans your QR code. Never miss a lead or a call.",
+        "Get instant alerts when someone scans your Veyoscan QR. Never miss a lead, inquiry, or call.",
     },
     {
       title: "Smart Dashboard",
       icon: "chart" as const,
       desc:
-        "Track all interactions, analyze scan patterns, and manage your QR communications from one place.",
+        "Track all Veyoscan interactions, analyze scan activity, and manage your QR communication from one place.",
     },
   ];
 
@@ -125,19 +125,19 @@ export default function Features() {
       title: "AI Assistant",
       icon: "bot" as const,
       desc:
-        "Smart AI handles calls when you're offline, takes messages, and auto-responds to common queries 24/7.",
+        "Veyoscan AI handles calls when you're offline, takes messages, and auto-responds to common queries 24/7.",
     },
     {
       title: "Cloud Integration",
       icon: "cloud" as const,
       desc:
-        "All your data stays in sync with enterprise-grade security. Access history from anywhere, anytime.",
+        "All your Veyoscan data stays in sync with enterprise-grade security. Access history from anywhere, anytime.",
     },
     {
       title: "Mobile Optimized",
       icon: "mobile" as const,
       desc:
-        "Works perfectly on any device with a camera. No special hardware — just scan and connect.",
+        "Veyoscan works perfectly on any device with a camera. No special hardware — just scan and connect.",
     },
   ];
 
@@ -157,13 +157,13 @@ export default function Features() {
           />
           <h2 className="text-4xl sm:text-5xl font-black tracking-[-0.02em]">
             <span className="bg-gradient-to-b from-cyan-300 to-white bg-clip-text text-transparent">
-              Instant QR Communication Platform
+              Why Veyoscan Stands Out
             </span>
           </h2>
           <p className="mx-auto mt-5 max-w-3xl text-lg text-white/80 leading-relaxed">
-            Transform any surface into a direct communication gateway with our
-            revolutionary QR technology that connects people instantly without
-            barriers
+            Veyoscan transforms any surface into a smart communication gateway
+            with QR-powered technology that connects people instantly without
+            barriers.
           </p>
         </div>
 

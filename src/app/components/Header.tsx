@@ -21,7 +21,7 @@ export default function Header() {
     { href: '/about', label: 'About' },
     { href: '/get-qr/pricing', label: 'Pricing' },
     { href: '/contact', label: 'Contact' },
-    { href: '/message', label: "Founder’s Message" },
+    
   ];
 
   useEffect(() => {
@@ -98,11 +98,11 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-3 text-white h-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/images/bg-logo.png"
-              alt="Qratech logo"
+              src="/images/veyoscan logo.jpeg"
+              alt="veyoscan logo"
               className="h-full w-auto object-contain"
             />
-            <span className="font-semibold tracking-wide text-lg">Qratech</span>
+            <span className="font-semibold tracking-wide text-lg">Veyoscan</span>
           </Link>
 
           {/* Desktop Navigation */}

@@ -34,7 +34,7 @@ function useCountUp({
 type HeroProps = { imageSrc?: string };
 
 export default function Hero({
-  imageSrc = "/images/HOME-QR.png",
+  imageSrc = "/images/QRSAMPARK without logo.png",
 }: HeroProps) {
   const users = useCountUp({ end: 5000, duration: 1600 });
   const scans = useCountUp({ end: 25000, duration: 1800 });
@@ -49,7 +49,7 @@ export default function Hero({
         {/* LEFT */}
         <div className="space-y-6">
           <p className="text-xs font-semibold tracking-[0.25em] text-cyan-300">
-            SCAN. CONNECT. COMMUNICATE INSTANTLY.
+            SMARTER WAY TO BE REACHED 
           </p>
 
           <div className="relative">

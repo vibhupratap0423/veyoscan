@@ -33,8 +33,8 @@ export default function Footer() {
 
           <div className="flex items-center gap-3 mb-4 relative z-10">
             <Image
-              src="/images/bg-logo.png"
-              alt="Qratech Logo"
+              src="/images/veyoscan logo.jpeg"
+              alt="Veyoscan Logo"
               width={100}
               height={100}
               className="rounded-md object-contain"
@@ -48,7 +48,7 @@ export default function Footer() {
           <p className="text-white/80 leading-relaxed relative z-10">
             Revolutionizing communication through innovative QR technology.
             Connect instantly, communicate effortlessly, and transform how you
-            interact with the world.
+            interact with the world through Veyoscan.
           </p>
         </div>
 
@@ -117,31 +117,31 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 text-white/80 text-sm sm:text-base">
           <div className="flex items-center gap-2">
             <FaEnvelope className="text-cyan-400" />
-            <span>support@qratech.in</span>
+            <span>support@veyoscan.com</span>
           </div>
 
           <a
-            href="tel:+919933309571"
+            href="tel:+918800625883"
             className="flex items-center gap-2 hover:text-cyan-300 transition"
           >
             <FaPhoneAlt className="text-cyan-400" />
-            <span>+91 9933309571</span>
+            <span>+91 8800625883</span>
           </a>
 
           <a
-            href="https://wa.me/919933309571"
+            href="https://wa.me/918800625883"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 hover:text-green-400 transition"
           >
             <FaWhatsapp className="text-green-400" />
-            <span>+91-9933309571</span>
+            <span>+91 8800625883</span>
           </a>
 
           {/* Social icons */}
           <div className="flex items-center gap-3 ml-0 sm:ml-4">
             <a
-              href="https://www.instagram.com/qratech?igsh=MWZpbDhzaWdnYjV1OA=="
+              href="https://www.instagram.com/veyoscan"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white/10 p-2 rounded-full hover:bg-pink-500/20 transition"
@@ -150,7 +150,7 @@ export default function Footer() {
             </a>
 
             <a
-              href="https://www.facebook.com/share/1KAXbhabyD/"
+              href="https://www.facebook.com/"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white/10 p-2 rounded-full hover:bg-blue-500/20 transition"
@@ -159,7 +159,7 @@ export default function Footer() {
             </a>
 
             <a
-              href="https://www.linkedin.com/company/108400474/admin/dashboard/"
+              href="https://www.linkedin.com/"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white/10 p-2 rounded-full hover:bg-blue-400/20 transition"
@@ -181,7 +181,7 @@ export default function Footer() {
 
       {/* bottom line */}
       <p className="text-center text-white/60 text-sm mt-8">
-        © {new Date().getFullYear()} Qratech. All rights reserved.
+        © {new Date().getFullYear()} Veyoscan. All rights reserved.
       </p>
     </footer>
   );

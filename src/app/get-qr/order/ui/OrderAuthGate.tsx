@@ -68,10 +68,10 @@ export default function OrderAuthGate({
     return (
       <div className={`${C.card} text-center`}>
         <p className="text-white/90 text-lg font-semibold">
-          Sign in required to place an order
+          Sign in required to place a Veyoscan order
         </p>
         <p className="mt-2 text-white/70 text-sm">
-          Continue to order your <span className="text-white">{type}</span> QR.
+          Continue to order your <span className="text-white">{type}</span> Veyoscan QR.
         </p>
 
         <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -82,14 +82,14 @@ export default function OrderAuthGate({
             >
               Login
             </button>
-            <div className={C.helper}>If you already have an account, login.</div>
+            <div className={C.helper}>If you already have a Veyoscan account, login.</div>
           </div>
 
           <div className="w-full sm:w-auto">
             <button onClick={goRegister} className={`${C.btnGhost} w-full sm:w-auto`}>
               Register
             </button>
-            <div className={C.helper}>If you are a new user, please register.</div>
+            <div className={C.helper}>If you are a new Veyoscan user, please register.</div>
           </div>
         </div>
       </div>

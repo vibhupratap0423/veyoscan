@@ -2,9 +2,9 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Pricing | QRatech QR Stickers",
+  title: "Pricing | Veyoscan QR Stickers",
   description:
-    "Choose Economy or Premium QR sticker pack. Secure online payment via Razorpay or COD.",
+    "Choose Economy or Premium Veyoscan QR sticker pack. Secure online payment via Razorpay or COD.",
 };
 
 function PriceTag({ value }: { value: string }) {
@@ -42,16 +42,16 @@ export default function PricingPage() {
         {/* header */}
         <div className="mx-auto max-w-3xl text-center">
           <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80">
-            QRatech QR Stickers • Secure Checkout
+            Veyoscan QR Stickers • Secure Checkout
           </p>
 
           <h1 className="mt-4 text-3xl md:text-5xl font-extrabold tracking-tight">
-            Choose the right plan for your QR stickers
+            Choose the right plan for your Veyoscan QR stickers
           </h1>
 
           <p className="mt-3 text-sm md:text-base text-white/70">
-           Purchase once — QR sticker and activation are included. The QR will remain active with an annual activation charge.
-
+            Purchase once — your Veyoscan QR sticker and activation are included.
+            The QR will remain active with an annual activation charge.
           </p>
         </div>
 
@@ -80,7 +80,7 @@ export default function PricingPage() {
             </div>
 
             <div className="mt-6 grid gap-3">
-              <Check text="2 stickers included" />
+              <Check text="2 Veyoscan stickers included" />
               <Check text="1st year activation included" />
               <Check text="Fast order processing" />
               <Check text="Support on WhatsApp/Email" />
@@ -91,7 +91,7 @@ export default function PricingPage() {
                 Renewal: <span className="font-semibold">₹199 / year</span>
               </p>
               <p className="mt-1 text-xs text-white/60">
-                Features continue with yearly activation.
+                Veyoscan features continue with yearly activation.
               </p>
             </div>
 
@@ -134,13 +134,13 @@ export default function PricingPage() {
             <div className="mt-6">
               <PriceTag value="₹699" />
               <p className="mt-2 text-sm text-white/70">
-                One time purchase (customized sticker option available)
+                One time purchase (customized Veyoscan sticker option available)
               </p>
             </div>
 
             <div className="mt-6 grid gap-3">
               <Check text="2-year validity from the date of activation" />
-              <Check text="Get 4 QR stickers with 2 unique designs" />
+              <Check text="Get 4 Veyoscan QR stickers with 2 unique designs" />
               <Check text="Access to all upcoming upgraded features at no additional cost" />
               <Check text="Free delivery across India" />
             </div>
@@ -150,7 +150,7 @@ export default function PricingPage() {
                 Renewal: <span className="font-semibold">₹299 / year</span>
               </p>
               <p className="mt-1 text-xs text-white/60">
-                Features continue with yearly activation.
+                Veyoscan features continue with yearly activation.
               </p>
             </div>
 
@@ -182,7 +182,8 @@ export default function PricingPage() {
             Need help choosing a plan?
           </p>
           <p className="mt-2 text-sm text-white/70">
-           Economy is best for personal users. Premium is ideal for business and branding. After placing the order, a confirmation will be sent to your email.
+            Economy is best for personal users. Premium is ideal for business and branding.
+            After placing the order, a confirmation will be sent to your email.
           </p>
 
           <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">

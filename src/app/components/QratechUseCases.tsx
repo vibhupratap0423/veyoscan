@@ -29,9 +29,9 @@ const fadeUp = (delay = 0) => ({
 });
 
 /** ✅ Component (same UI/behavior) */
-export default function QratechUseCases({
+export default function VeyoscanUseCases({
   useCases,
-  title = "Real-Life Use Cases of Qratech",
+  title = "Real-Life Use Cases of Veyoscan",
   subtitle = `Transforming everyday situations into safer, smarter, and more connected experiences —
 from emergencies to simple parking interactions.`,
 }: {
@@ -55,31 +55,31 @@ from emergencies to simple parking interactions.`,
       {
         title: "Emergency Assistance",
         icon: <FiAlertTriangle className="text-cyan-300" size={24} />,
-        desc: "A tragic accident occurs on the road. A bystander scans the vehicle’s QR tag and instantly connects with the driver’s family or emergency contact — saving crucial minutes.",
+        desc: "A tragic accident occurs on the road. A bystander scans the vehicle’s Veyoscan QR tag and instantly connects with the driver’s family or emergency contact — saving crucial minutes.",
         video: "/images/vedio1.mp4",
       },
       {
         title: "Parking Conflict",
         icon: <FiTruck className="text-cyan-300" size={24} />,
-        desc: "Someone accidentally parks behind your car. Instead of honking or wasting time, they simply scan your QR code and send a polite message or call instantly.",
+        desc: "Someone accidentally parks behind your car. Instead of honking or wasting time, they simply scan your Veyoscan QR code and send a polite message or call instantly.",
         img: "/images/wrong parking.jpg",
       },
       {
         title: "Lost Belongings",
         icon: <FiPhoneCall className="text-cyan-300" size={24} />,
-        desc: "You left your phone, wallet, or helmet in a café. The finder scans your QR tag and reaches you without needing to reveal personal numbers or apps.",
+        desc: "You left your phone, wallet, or helmet in a café. The finder scans your Veyoscan QR tag and reaches you without needing to reveal personal numbers or apps.",
         img: "/images/lost2.png",
       },
       {
         title: "Community Safety",
         icon: <FiUsers className="text-cyan-300" size={24} />,
-        desc: "Neighborhood watch or local groups can use Qratech stickers on gates, bikes, and devices — building quick, private communication between citizens and owners.",
+        desc: "Neighborhood watch or local groups can use Veyoscan stickers on gates, bikes, and devices — building quick, private communication between citizens and owners.",
         img: "/images/home.jpg",
       },
       {
         title: "Medical Emergency",
         icon: <FiHeart className="text-cyan-300" size={24} />,
-        desc: "A patient’s health QR tag shows blood group, emergency number, and allergy info — allowing faster first aid and accurate hospital coordination.",
+        desc: "A patient’s Veyoscan health QR tag shows blood group, emergency number, and allergy info — allowing faster first aid and accurate hospital coordination.",
         img: "/images/emergency.jpg",
       },
     ],
