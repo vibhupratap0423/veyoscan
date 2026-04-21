@@ -420,9 +420,9 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico" },
-      { url: "/images/logo.png", type: "image/png" },
+      { url: "/images/final logo  (2).png", type: "image/png" },
     ],
-    apple: [{ url: "/images/logo.png", type: "image/png" }],
+    apple: [{ url: "/images/final logo  (2).png", type: "image/png" }],
   },
   manifest: "/site.webmanifest",
   alternates: {
