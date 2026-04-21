@@ -9,7 +9,8 @@ import {
   FaWhatsapp,
   FaInstagram,
   FaFacebookF,
-  FaLinkedinIn,
+ 
+  FaYoutube,
 } from "react-icons/fa";
 
 export default function Footer() {
@@ -33,7 +34,7 @@ export default function Footer() {
 
           <div className="flex items-center gap-3 mb-4 relative z-10">
             <Image
-              src="/images/veyoscan logo.jpeg"
+              src="/images/final logo  (2).png"
               alt="Veyoscan Logo"
               width={100}
               height={100}
@@ -41,7 +42,7 @@ export default function Footer() {
               priority
             />
             <h3 className="text-xl font-semibold tracking-wide">
-              Scan • Connect • Instantly
+              Smarter Way To Be Reached
             </h3>
           </div>
 
@@ -141,7 +142,7 @@ export default function Footer() {
           {/* Social icons */}
           <div className="flex items-center gap-3 ml-0 sm:ml-4">
             <a
-              href="https://www.instagram.com/veyoscan"
+              href="https://www.instagram.com/veyoscan/"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white/10 p-2 rounded-full hover:bg-pink-500/20 transition"
@@ -150,7 +151,7 @@ export default function Footer() {
             </a>
 
             <a
-              href="https://www.facebook.com/"
+              href="https://www.facebook.com/profile.php?id=61572231007919"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white/10 p-2 rounded-full hover:bg-blue-500/20 transition"
@@ -159,12 +160,12 @@ export default function Footer() {
             </a>
 
             <a
-              href="https://www.linkedin.com/"
+              href="https://www.youtube.com/@veyoscan"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white/10 p-2 rounded-full hover:bg-blue-400/20 transition"
             >
-              <FaLinkedinIn />
+              <FaYoutube />
             </a>
           </div>
         </div>

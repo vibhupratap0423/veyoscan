@@ -56,7 +56,7 @@ from emergencies to simple parking interactions.`,
         title: "Emergency Assistance",
         icon: <FiAlertTriangle className="text-cyan-300" size={24} />,
         desc: "A tragic accident occurs on the road. A bystander scans the vehicle’s Veyoscan QR tag and instantly connects with the driver’s family or emergency contact — saving crucial minutes.",
-        video: "/images/vedio1.mp4",
+        video: "/Untitled design.mp4",
       },
       {
         title: "Parking Conflict",

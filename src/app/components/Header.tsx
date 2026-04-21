@@ -98,7 +98,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-3 text-white h-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/images/veyoscan logo.jpeg"
+              src="/images/final logo  (2).png"
               alt="veyoscan logo"
               className="h-full w-auto object-contain"
             />

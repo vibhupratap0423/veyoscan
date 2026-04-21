@@ -13,7 +13,7 @@ const CARDS = [
   { key: "personal",  title: "Personal QR",         desc: "Share your profile or contact details with a single Veyoscan scan.", img: "/images/persnol.jpg" },
   { key: "house",     title: "House / Society QR",  desc: "Visitor connect, emergency contact, and security gate workflows.", img: "/images/house.jpg" },
   { key: "event",     title: "Event / Ticket QR",   desc: "Check-in, access control, and lead capture made easy.", img: "/images/event.jpg" },
-  { key: "lostfound", title: "Lost & Found QR",     desc: "Mark your items with a callback QR for faster recovery.", img: "/images/lost1.png" },
+  { key: "lostfound", title: "Lost & Found QR",     desc: "Mark your items with a callback QR for faster recovery.", img: "/images/lost2.png" },
 ];
 
 export default function GetQrLanding() {
