@@ -241,8 +241,8 @@ export default function PrivacyPage() {
               </div>
               <div className="flex items-center gap-2">
                 <FiPhone className="text-cyan-300" />
-                <a href="tel:+91-8800625883" className="text-cyan-300 underline">
-                  +91-8800625883
+                <a href="tel:+91-9643964242" className="text-cyan-300 underline">
+                  +91-9643964242
                 </a>
               </div>
             </div>
@@ -253,9 +253,7 @@ export default function PrivacyPage() {
         </div>
 
         {/* Footer note */}
-        <motion.div {...fadeUp(0.75)} className="mt-10 text-center text-white/60">
-          Last Updated: {updatedAt} • © {new Date().getFullYear()} Veyoscan
-        </motion.div>
+       
       </div>
     </main>
   );

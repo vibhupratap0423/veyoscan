@@ -9,7 +9,6 @@ import {
   FaWhatsapp,
   FaInstagram,
   FaFacebookF,
- 
   FaYoutube,
 } from "react-icons/fa";
 
@@ -122,21 +121,21 @@ export default function Footer() {
           </div>
 
           <a
-            href="tel:+918800625883"
+            href="tel:+919643964242"
             className="flex items-center gap-2 hover:text-cyan-300 transition"
           >
             <FaPhoneAlt className="text-cyan-400" />
-            <span>+91 8800625883</span>
+            <span>+91 9643964242</span>
           </a>
 
           <a
-            href="https://wa.me/918800625883"
+            href="https://wa.me/919643964242"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 hover:text-green-400 transition"
           >
             <FaWhatsapp className="text-green-400" />
-            <span>+91 8800625883</span>
+            <span>+91 9643964242</span>
           </a>
 
           {/* Social icons */}

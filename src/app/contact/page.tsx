@@ -172,12 +172,12 @@ export default function ContactsPage() {
                 <span className="text-xs text-white/50">
                   You can also reach us at{" "}
                   <a
-                    href="https://wa.me/918800625883"
+                    href="https://wa.me/919643964242"
                     target="_blank"
                     rel="noreferrer"
                     className="text-cyan-300 hover:underline"
                   >
-                    +91 8800625883
+                    +91 9643964242
                   </a>
                   .
                 </span>
@@ -192,7 +192,7 @@ export default function ContactsPage() {
             title="Email"
             content={<a className="hover:underline" href="mailto:support@veyoscan.com">support@veyoscan.com</a>}
           />
-          <InfoTile title="Helpline" content={<span>+91-8800625883 (09:00–18:00 IST)</span>} />
+          <InfoTile title="Helpline" content={<span>+91-9643964242 (09:00–18:00 IST)</span>} />
           <InfoTile title="Address" content={<span>Veyoscan Support Desk, India</span>} />
         </div>
       </section>

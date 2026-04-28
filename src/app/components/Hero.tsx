@@ -45,7 +45,7 @@ export default function Hero({
       {/* BG glow */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(65%_65%_at_20%_20%,rgba(34,211,238,0.12),transparent_60%),radial-gradient(60%_60%_at_80%_20%,rgba(99,102,241,0.12),transparent_60%)]" />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:py-16">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:py-10">
         {/* LEFT */}
         <div className="space-y-6">
           <p className="text-xs font-semibold tracking-[0.25em] text-cyan-300">

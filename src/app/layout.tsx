@@ -29,7 +29,6 @@ export const viewport: Viewport = {
 
 /* ---------- Massive SEO Keywords: English + Hindi ---------- */
 const seoKeywords = [
-  // Brand
   "VeyoScan",
   "Veyo Scan",
   "veyoscan",
@@ -40,8 +39,6 @@ const seoKeywords = [
   "VeyoScan digital QR platform",
   "VeyoScan customer connect solution",
   "VeyoScan business QR services",
-
-  // Core QR keywords
   "QR code solution",
   "QR code platform",
   "smart QR code",
@@ -109,8 +106,6 @@ const seoKeywords = [
   "fast connect QR system",
   "smart customer support QR",
   "instant customer connect solution",
-
-  // Industry keywords
   "vehicle QR code",
   "car QR code",
   "bike QR code",
@@ -163,8 +158,6 @@ const seoKeywords = [
   "QR for gate entry",
   "QR for security",
   "QR for emergency contact",
-
-  // Call/Chat keywords
   "scan to call business",
   "QR call now",
   "QR direct call",
@@ -184,8 +177,6 @@ const seoKeywords = [
   "instant scan support",
   "clickless contact solution",
   "one scan one connect",
-
-  // Marketing keywords
   "QR marketing solution",
   "QR code branding",
   "QR campaign solution",
@@ -210,8 +201,6 @@ const seoKeywords = [
   "QR for retail marketing",
   "QR solution for local marketing",
   "brand promotion using QR",
-
-  // Hindi transliteration / Hindi SEO
   "QR code solution India hindi",
   "business ke liye QR code",
   "scan karke call kare",
@@ -257,8 +246,6 @@ const seoKeywords = [
   "qr code se support system",
   "qr based communication platform",
   "modern qr code solution",
-
-  // Hindi native keywords
   "क्यूआर कोड समाधान",
   "क्यूआर कोड प्लेटफॉर्म",
   "स्मार्ट क्यूआर कोड",
@@ -324,8 +311,6 @@ const seoKeywords = [
   "वेयोस्कैन डॉट कॉम",
   "वेयोस्कैन क्यूआर सेवा",
   "वेयोस्कैन स्मार्ट क्यूआर प्लेटफॉर्म",
-
-  // Long-tail SEO keywords
   "best dynamic QR code platform for business in India",
   "smart QR code solution for shops and businesses",
   "scan to call QR code service provider in India",
@@ -351,8 +336,6 @@ const seoKeywords = [
   "वाहन और पार्किंग के लिए क्यूआर कोड समाधान",
   "सोशल मीडिया लिंक के साथ क्यूआर कोड प्लेटफॉर्म",
   "फीडबैक और शिकायत के लिए क्यूआर कोड सिस्टम",
-
-  // Extra keyword variations to cross 500+ SEO intent coverage
   "veyoscan qr code service",
   "veyoscan scan to call",
   "veyoscan scan to chat",
@@ -536,7 +519,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="antialiased bg-[#0b0f1a] text-white">
+      <body className="antialiased bg-[#0b0f1a] text-white overflow-x-hidden">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-cyan-500 focus:px-3 focus:py-2 focus:text-black"
@@ -544,9 +527,11 @@ export default function RootLayout({
           Skip to content
         </a>
 
-        <Header />
+        <div className="fixed top-0 left-0 right-0 z-50 w-full">
+          <Header />
+        </div>
 
-        <main id="main-content" role="main">
+        <main id="main-content" role="main" className="pt-24">
           {children}
         </main>
 
