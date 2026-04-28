@@ -518,23 +518,27 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+  <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable}`}
+    >
       <body className="antialiased bg-[#0b0f1a] text-white overflow-x-hidden">
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-cyan-500 focus:px-3 focus:py-2 focus:text-black"
-        >
-          Skip to content
-        </a>
 
-        <div className="fixed top-0 left-0 right-0 z-50 w-full">
+        {/* ===== HEADER (FIXED) ===== */}
+        <header className="fixed top-0 left-0 w-full z-50 h-20">
           <Header />
-        </div>
+        </header>
 
-        <main id="main-content" role="main" className="pt-24">
+        {/* ===== MAIN CONTENT (NO GAP ISSUE FIXED) ===== */}
+        <main
+          id="main-content"
+          role="main"
+          className="pt-20" // ✅ same as header height
+        >
           {children}
         </main>
 
+        {/* ===== FOOTER ===== */}
         <Footer />
 
         <Script
