@@ -525,7 +525,7 @@ export default function RootLayout({
       <body className="antialiased bg-[#0b0f1a] text-white overflow-x-hidden">
 
         {/* ===== HEADER (FIXED) ===== */}
-        <header className="fixed top-0 left-0 w-full z-50 h-20">
+        <header className="fixed top-0 left-0 w-full z-50 h-16 md:h-20">
           <Header />
         </header>
 
@@ -533,7 +533,7 @@ export default function RootLayout({
         <main
           id="main-content"
           role="main"
-          className="pt-20" // ✅ same as header height
+          className="pt-16 md:pt-20" // ✅ mobile header 64px, desktop header 80px
         >
           {children}
         </main>
