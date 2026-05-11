@@ -94,16 +94,24 @@ export default function Header() {
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Top Row */}
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Brand + Logo */}
-          <Link href="/" className="flex items-center gap-3 text-white h-full">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/final logo  (2).png"
-              alt="veyoscan logo"
-              className="h-full w-auto object-contain"
-            />
-            <span className="font-semibold tracking-wide text-lg">Veyoscan</span>
-          </Link>
+         
+
+{/* Brand + Logo */}
+<Link href="/" className="flex items-center gap-3 text-white h-full">
+  <div className="flex h-[62px] w-[86px] items-center justify-center rounded-2xl border border-cyan-300/25 bg-white px-2 py-1 shadow-[0_0_16px_rgba(34,211,238,0.18)]">
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
+      src="/images/final logo  (2).png"
+      alt="veyoscan logo"
+      className="h-full w-full object-contain scale-[1.20]"
+      draggable={false}
+    />
+  </div>
+
+  <span className="font-semibold tracking-wide text-lg leading-none">
+    Veyoscan
+  </span>
+</Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
@@ -117,9 +125,13 @@ export default function Header() {
               </a>
             ))}
 
-            <Link href="/get-qr" prefetch={false} className="hover:text-cyan-300">
-              Get QR
-            </Link>
+           <Link
+  href="/get-qr"
+  prefetch={false}
+  className="text-sm text-white/80 hover:text-white"
+>
+  Get QR
+</Link>
 
             {!user ? (
               <div className="flex items-center gap-3">
