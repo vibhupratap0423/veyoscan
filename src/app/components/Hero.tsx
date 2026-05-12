@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
@@ -8,7 +9,11 @@ function useCountUp({
   end,
   duration = 1500,
   decimals = 0,
-}: { end: number; duration?: number; decimals?: number }) {
+}: {
+  end: number;
+  duration?: number;
+  decimals?: number;
+}) {
   const [val, setVal] = useState(0);
   const raf = useRef<number | null>(null);
   const t0 = useRef<number | null>(null);
@@ -16,12 +21,19 @@ function useCountUp({
   useEffect(() => {
     const step = (t: number) => {
       if (t0.current == null) t0.current = t;
+
       const p = Math.min(1, (t - t0.current) / duration);
       const cur = end * (1 - Math.pow(1 - p, 3));
+
       setVal(cur);
-      if (p < 1) raf.current = requestAnimationFrame(step);
+
+      if (p < 1) {
+        raf.current = requestAnimationFrame(step);
+      }
     };
+
     raf.current = requestAnimationFrame(step);
+
     return () => {
       if (raf.current) cancelAnimationFrame(raf.current);
       t0.current = null;
@@ -31,7 +43,9 @@ function useCountUp({
   return useMemo(() => val.toFixed(decimals), [val, decimals]);
 }
 
-type HeroProps = { imageSrc?: string };
+type HeroProps = {
+  imageSrc?: string;
+};
 
 export default function Hero({
   imageSrc = "/images/QRSAMPARK without logo.png",
@@ -49,15 +63,20 @@ export default function Hero({
         {/* LEFT */}
         <div className="space-y-6">
           <p className="text-xs font-semibold tracking-[0.25em] text-cyan-300">
-            SMARTER WAY TO BE REACHED 
+            SMARTER WAY TO BE REACHED
           </p>
 
           <div className="relative">
             <motion.div
-              className="absolute -inset-8 rounded-full blur-3xl bg-cyan-500/20"
+              className="absolute -inset-8 rounded-full bg-cyan-500/20 blur-3xl"
               animate={{ opacity: [0.4, 0.9, 0.4], scale: [1, 1.1, 1] }}
-              transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
+              transition={{
+                repeat: Infinity,
+                duration: 3.5,
+                ease: "easeInOut",
+              }}
             />
+
             <motion.h1
               animate={{
                 textShadow: [
@@ -66,19 +85,24 @@ export default function Hero({
                   "0 0 20px rgba(34,211,238,0.6)",
                 ],
               }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="relative z-10 text-5xl sm:text-7xl font-black leading-[1.1] tracking-[-0.03em]"
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="relative z-10 text-5xl font-black leading-[1.1] tracking-[-0.03em] sm:text-7xl"
             >
               <span className="block bg-gradient-to-r from-[#00bfff] to-white bg-clip-text text-transparent">
                 Scan to Connect
               </span>
+
               <span className="block bg-gradient-to-r from-white to-[#00bfff] bg-clip-text text-transparent">
                 Instantly
               </span>
             </motion.h1>
           </div>
 
-          <p className="max-w-xl text-[1.2rem] font-semibold text-white/85 leading-relaxed">
+          <p className="max-w-xl text-[1.2rem] font-semibold leading-relaxed text-white/85">
             No apps. No numbers. Just scan to talk. Transform any surface into a
             direct communication gateway with revolutionary QR technology that
             bridges the gap between physical and digital interaction.
@@ -94,6 +118,7 @@ export default function Hero({
                 Active Users
               </div>
             </div>
+
             <div>
               <div className="text-3xl font-bold tracking-tight text-cyan-300">
                 {Number(scans).toLocaleString()}+
@@ -102,6 +127,7 @@ export default function Hero({
                 QR Scans
               </div>
             </div>
+
             <div>
               <div className="text-3xl font-bold tracking-tight text-cyan-300">
                 {uptime}%
@@ -114,18 +140,19 @@ export default function Hero({
 
           {/* CTAs */}
           <div className="flex flex-col items-start gap-4 pt-2 sm:flex-row">
-            <a
+            <Link
               href="/get-qr"
               className="rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500 px-6 py-3 font-medium shadow-lg shadow-cyan-500/20 hover:opacity-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
             >
               Get Your QR
-            </a>
-            <a
+            </Link>
+
+            <Link
               href="/use"
               className="rounded-full border border-cyan-400/40 bg-white/5 px-6 py-3 font-medium text-cyan-100 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
             >
               Watch Demo
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -137,13 +164,13 @@ export default function Hero({
           className="relative mx-auto w-full max-w-[320px] sm:max-w-[360px] md:max-w-[400px]"
         >
           <div className="relative mx-auto w-full">
-            {/* Shorter phone: aspect 9/14 (less tall) */}
-            <div className="relative mx-auto w-full aspect-[9/14] max-w-[360px] rounded-[1.8rem] border border-white/15 bg-gradient-to-b from-slate-900 to-slate-950 p-2 shadow-2xl shadow-cyan-500/20">
+            {/* Shorter phone: aspect 9/14 */}
+            <div className="relative mx-auto aspect-[9/14] w-full max-w-[360px] rounded-[1.8rem] border border-white/15 bg-gradient-to-b from-slate-900 to-slate-950 p-2 shadow-2xl shadow-cyan-500/20">
               {/* Bezel shine */}
               <div className="pointer-events-none absolute inset-0 rounded-[1.8rem] ring-1 ring-white/10" />
 
               {/* Notch */}
-              <div className="absolute top-1.5 left-1/2 z-20 h-4 w-32 -translate-x-1/2 rounded-b-2xl bg-black/70 backdrop-blur border-x border-b border-white/10" />
+              <div className="absolute left-1/2 top-1.5 z-20 h-4 w-32 -translate-x-1/2 rounded-b-2xl border-x border-b border-white/10 bg-black/70 backdrop-blur" />
 
               {/* Buttons hint */}
               <div className="absolute left-0 top-20 h-8 w-1 rounded-r bg-white/10" />
@@ -170,19 +197,26 @@ export default function Hero({
                 {/* QR frame */}
                 <motion.div
                   className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-xl border border-cyan-400/50 bg-cyan-400/10 backdrop-blur-[2px]"
-                  style={{ width: "9rem", height: "9rem" }} // 144px box (responsive enough)
+                  style={{ width: "9rem", height: "9rem" }}
                   initial={{ opacity: 0.9, scale: 0.98 }}
-                  animate={{ opacity: [0.9, 1, 0.9], scale: [0.98, 1, 0.98] }}
-                  transition={{ repeat: Infinity, duration: 2.6, ease: "easeInOut" }}
+                  animate={{
+                    opacity: [0.9, 1, 0.9],
+                    scale: [0.98, 1, 0.98],
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 2.6,
+                    ease: "easeInOut",
+                  }}
                 >
                   <div className="absolute inset-2 rounded-lg border-2 border-cyan-400/80" />
                 </motion.div>
 
-                {/* Scan line: centered, equal travel up & down */}
+                {/* Scan line */}
                 <motion.div
                   className="pointer-events-none absolute left-8 right-8 z-10 h-1.5 rounded bg-cyan-400/70"
                   style={{ top: "50%" }}
-                  animate={{ y: [-110, 110, -110] }} // equal distance from center
+                  animate={{ y: [-110, 110, -110] }}
                   transition={{ repeat: Infinity, duration: 2.4, ease: "linear" }}
                 />
 
