@@ -98,18 +98,18 @@ export default function Header() {
          
 
 {/* Brand + Logo */}
-<Link href="/" className="flex items-center gap-3 text-white h-full">
-  <div className="flex h-[62px] w-[86px] items-center justify-center rounded-2xl border border-cyan-300/25 bg-white px-2 py-1 shadow-[0_0_16px_rgba(34,211,238,0.18)]">
+<Link href="/" className="flex h-full items-center gap-3 text-white">
+  <div className="flex h-[50px] w-[70px] items-center justify-center rounded-xl border border-cyan-300/25 bg-white px-2 py-1 shadow-[0_0_14px_rgba(34,211,238,0.16)] sm:h-[62px] sm:w-[86px] sm:rounded-2xl">
     {/* eslint-disable-next-line @next/next/no-img-element */}
     <img
       src="/images/final logo  (2).png"
       alt="veyoscan logo"
-      className="h-full w-full object-contain scale-[1.20]"
+      className="h-full w-full object-contain scale-[1.18]"
       draggable={false}
     />
   </div>
 
-  <span className="font-semibold tracking-wide text-lg leading-none">
+  <span className="text-lg font-semibold leading-none tracking-wide">
     Veyoscan
   </span>
 </Link>

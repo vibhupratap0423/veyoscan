@@ -81,6 +81,11 @@ export default function Footer() {
                 Use-Cases
               </Link>
             </li>
+             <li>
+              <Link href="/blogs" className="hover:text-cyan-300 transition">
+                Blogs
+              </Link>
+            </li>
           </ul>
         </div>
 
