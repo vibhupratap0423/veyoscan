@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   QrCode,
@@ -326,13 +327,13 @@ export default function AboutPage() {
               bring a smarter QR-based experience into the real world.
             </p>
 
-            <a
-              href="/get-qr"
-              className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500 px-6 py-3 font-semibold text-black shadow-lg shadow-cyan-500/20 transition hover:scale-[1.02] hover:opacity-95 mt-6"
-            >
-              Explore Veyoscan
-              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-            </a>
+          <Link
+  href="/get-qr"
+  className="group mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500 px-6 py-3 font-semibold text-black shadow-lg shadow-cyan-500/20 transition hover:scale-[1.02] hover:opacity-95"
+>
+  Explore Veyoscan
+  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+</Link>
           </motion.div>
         </div>
       </section>
