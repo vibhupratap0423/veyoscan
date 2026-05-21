@@ -33,7 +33,7 @@ export default function Footer() {
 
           <div className="flex items-center gap-3 mb-4 relative z-10">
             <Image
-              src="/images/final logo  (2).png"
+              src="/whitebglogo.png"
               alt="Veyoscan Logo"
               width={100}
               height={100}
