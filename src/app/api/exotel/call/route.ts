@@ -24,8 +24,19 @@ function isUuidLike(v: string) {
   );
 }
 
+/**
+ * ✅ FIXED:
+ * Earlier this accepted only QR_000001
+ * Now it accepts:
+ * QR-000001
+ * QR_000001
+ */
 function isInventoryCode(v: string) {
-  return /^QR_[A-Z0-9]{6,}$/i.test(v);
+  return /^QR[-_][A-Z0-9]{6,}$/i.test(v);
+}
+
+function normalizeInventoryCode(v: string) {
+  return decodeURIComponent(v ?? "").trim().toUpperCase().replace(/\s+/g, "");
 }
 
 type ExotelConnectResponse = {
@@ -48,12 +59,16 @@ function getErrorMessage(err: unknown) {
 export async function POST(req: Request) {
   try {
     const rawBody: unknown = await req.json().catch(() => ({}));
+
     const body =
       typeof rawBody === "object" && rawBody !== null
         ? (rawBody as Record<string, unknown>)
         : {};
 
-    const uidRaw = ((body.uid as string | undefined) ?? "").trim();
+    const uidRaw = normalizeInventoryCode(
+      (body.uid as string | undefined) ?? ""
+    );
+
     const plateRaw = ((body.plate as string | undefined) ?? "").trim();
 
     const caller = ((body.caller_phone as string | undefined) ?? "").trim();
@@ -69,22 +84,31 @@ export async function POST(req: Request) {
     let ownerPhone = "";
     let emergencyPhone = "";
 
-    /* ---------------- UID BASED FLOW (UUID or Inventory Code) ---------------- */
+    /* ---------------- UID BASED FLOW ---------------- */
     if (uidRaw) {
       let resolvedUserId: string | null = null;
 
-      // 1) uid is already a UUID
+      // 1) uid is already auth user UUID
       if (isUuidLike(uidRaw)) {
         resolvedUserId = uidRaw;
       }
 
-      // 2) uid is inventory code like QR_XXXX
+      // 2) uid is inventory code like QR-000001 or QR_000001
       if (!resolvedUserId && isInventoryCode(uidRaw)) {
+        const possibleCodes = Array.from(
+          new Set([
+            uidRaw,
+            uidRaw.replace(/^QR_/, "QR-"),
+            uidRaw.replace(/^QR-/, "QR_"),
+          ])
+        );
+
         const { data: inv, error: invErr } = await supabase
           .from("qr_inventory")
-          .select("assigned_to,status")
-          .eq("code", uidRaw)
-          .single(); // ✅ unique code
+          .select("assigned_to,status,code")
+          .in("code", possibleCodes)
+          .limit(1)
+          .maybeSingle();
 
         if (invErr) {
           return NextResponse.json(
@@ -93,7 +117,14 @@ export async function POST(req: Request) {
           );
         }
 
-        if (!inv?.assigned_to) {
+        if (!inv) {
+          return NextResponse.json(
+            { ok: false, error: "QR code not found" },
+            { status: 404 }
+          );
+        }
+
+        if (!inv.assigned_to) {
           return NextResponse.json(
             { ok: false, error: "QR not activated yet" },
             { status: 400 }
@@ -103,7 +134,7 @@ export async function POST(req: Request) {
         resolvedUserId = String(inv.assigned_to);
       }
 
-      // 3) uid was provided but not resolvable
+      // 3) uid was provided but not UUID or valid QR inventory code
       if (!resolvedUserId) {
         return NextResponse.json(
           { ok: false, error: "Invalid UID / QR code" },
@@ -129,7 +160,7 @@ export async function POST(req: Request) {
       emergencyPhone = profile.emergency_phone ?? "";
     }
 
-    /* ---------------- PLATE BASED FLOW (LEGACY SAFE) ---------------- */
+    /* ---------------- PLATE BASED FLOW - LEGACY SAFE ---------------- */
     if (!ownerPhone && !emergencyPhone && plateRaw) {
       const { data: vehicle, error: vErr } = await supabase
         .from("vehicles")
@@ -208,7 +239,11 @@ export async function POST(req: Request) {
 
     if (!res.ok) {
       return NextResponse.json(
-        { ok: false, error: "Exotel failed", exotel: parsed ?? { raw: text } },
+        {
+          ok: false,
+          error: "Exotel failed",
+          exotel: parsed ?? { raw: text },
+        },
         { status: 500 }
       );
     }
