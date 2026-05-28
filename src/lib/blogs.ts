@@ -749,7 +749,7 @@ export const blogs: BlogPost[] = [
     category: "Vehicle QR",
     readTime: "5 min read",
     date: "2026",
-    thumbnail: "/blogs/new.png ",
+    thumbnail: "/blogs/2026.png",
     excerpt:
       "Technology is changing the way we drive, park, and communicate. In 2026, a smart QR for car is becoming one of the most useful upgrades for modern vehicle owners.      From parking emergencies to privacy protection, a QR code sticker for vehicles helps solve real-life problems quickly and professionally.Whether you own a personal car, manage multiple vehicles, or simply want a smarter driving experience, using a car QR sticker can make everyday situations easier and safer",
     sections: [
