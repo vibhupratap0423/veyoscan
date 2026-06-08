@@ -63,6 +63,8 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
     .filter((item) => item.slug !== blog.slug)
     .slice(0, 2);
 
+  const blogTopics = blog.sections.filter((section) => section.heading);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -125,47 +127,55 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
       <section className="mx-auto max-w-5xl px-5 py-10 sm:px-8 lg:px-10">
         <div className="relative mb-10 aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-slate-900">
-  <Image
-    src={blog.thumbnail}
-    alt={blog.title}
-    fill
-    priority
-    className="object-cover"
-    sizes="(max-width: 1024px) 100vw, 1024px"
-  />
-</div>
+          <Image
+            src={blog.thumbnail}
+            alt={blog.title}
+            fill
+            priority
+            className="object-cover"
+            sizes="(max-width: 1024px) 100vw, 1024px"
+          />
+        </div>
 
         <div className="grid gap-10 lg:grid-cols-[1fr_280px]">
           <article className="rounded-2xl border border-white/10 bg-[#101827] p-6 sm:p-8">
             {blog.sections.map((section, index) => (
               <section
-                key={section.heading}
-                className={index === 0 ? "" : "mt-10 border-t border-white/10 pt-8"}
+                key={`${section.heading || "section"}-${index}`}
+                className={
+                  index === 0 ? "" : "mt-10 border-t border-white/10 pt-8"
+                }
               >
-                <h2 className="text-2xl font-bold leading-snug text-white">
-                  {section.heading}
-                </h2>
+                {section.heading && (
+                  <h2 className="text-2xl font-bold leading-snug text-white">
+                    {section.heading}
+                  </h2>
+                )}
 
-                <div className="mt-4 space-y-4">
-                  {section.body.map((paragraph) => (
-                    <p
-                      key={paragraph}
-                      className="text-base leading-8 text-slate-300"
-                    >
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
+                {section.body.length > 0 && (
+                  <div className={section.heading ? "mt-4 space-y-4" : "space-y-4"}>
+                    {section.body.map((paragraph, paragraphIndex) => (
+                      <p
+                        key={`${paragraphIndex}-${paragraph}`}
+                        className="text-base leading-8 text-slate-300 [&_a]:text-cyan-300 [&_a]:font-semibold [&_a]:underline-offset-4 hover:[&_a]:underline"
+                        dangerouslySetInnerHTML={{ __html: paragraph }}
+                      />
+                    ))}
+                  </div>
+                )}
 
                 {section.bullets && section.bullets.length > 0 && (
                   <ul className="mt-5 space-y-3">
-                    {section.bullets.map((bullet) => (
+                    {section.bullets.map((bullet, bulletIndex) => (
                       <li
-                        key={bullet}
+                        key={`${bulletIndex}-${bullet}`}
                         className="flex gap-3 text-sm leading-6 text-slate-300"
                       >
                         <span className="mt-1 text-cyan-300">✓</span>
-                        <span>{bullet}</span>
+                        <span
+                          className="[&_a]:text-cyan-300 [&_a]:font-semibold [&_a]:underline-offset-4 hover:[&_a]:underline"
+                          dangerouslySetInnerHTML={{ __html: bullet }}
+                        />
                       </li>
                     ))}
                   </ul>
@@ -178,9 +188,10 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
                 {blog.ctaTitle}
               </h3>
 
-              <p className="mt-3 text-sm leading-7 text-slate-300">
-                {blog.ctaDescription}
-              </p>
+              <p
+                className="mt-3 text-sm leading-7 text-slate-300 [&_a]:text-cyan-300 [&_a]:font-semibold [&_a]:underline-offset-4 hover:[&_a]:underline"
+                dangerouslySetInnerHTML={{ __html: blog.ctaDescription }}
+              />
 
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
@@ -207,9 +218,9 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
               </h3>
 
               <div className="mt-4 space-y-3">
-                {blog.sections.map((section, index) => (
+                {blogTopics.map((section, index) => (
                   <p
-                    key={section.heading}
+                    key={`${section.heading}-${index}`}
                     className="border-b border-white/10 pb-3 text-sm leading-6 text-slate-300 last:border-b-0 last:pb-0"
                   >
                     {index + 1}. {section.heading}
