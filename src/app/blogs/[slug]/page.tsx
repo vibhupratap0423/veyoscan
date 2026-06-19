@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -11,10 +10,17 @@ type BlogDetailPageProps = {
   }>;
 };
 
+type BlogInnerImage = {
+  src: string;
+  alt?: string;
+  caption?: string;
+};
+
 type BlogSection = {
   heading: string;
   body: string[];
   bullets?: string[];
+  innerImage?: BlogInnerImage;
 };
 
 type TableData = {
@@ -316,6 +322,34 @@ function shouldShowDivider(section: BlogSection, index: number) {
   return true;
 }
 
+function InnerBlogImage({
+  image,
+  fallbackAlt,
+}: {
+  image: BlogInnerImage;
+  fallbackAlt: string;
+}) {
+  return (
+    <figure className="my-6 w-full max-w-full overflow-hidden rounded-xl border border-white/10 bg-[#0b1220] sm:my-7 sm:rounded-2xl">
+      <div className="relative aspect-[688/400] w-full max-w-full">
+        <Image
+          src={image.src}
+          alt={image.alt || fallbackAlt}
+          fill
+          className="object-contain"
+          sizes="(max-width: 480px) calc(100vw - 48px), (max-width: 768px) calc(100vw - 64px), (max-width: 1024px) calc(100vw - 96px), 760px"
+        />
+      </div>
+
+      {image.caption && (
+        <figcaption className="border-t border-white/10 px-3 py-3 text-xs leading-5 text-slate-400 sm:px-4">
+          {image.caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
 function HtmlText({
   html,
   as = "p",
@@ -386,16 +420,16 @@ function BlogTable({ section }: { section: BlogSection }) {
   }
 
   return (
-    <div className="mt-5">
-      <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0b1220]">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[620px] border-collapse text-left">
+    <div className="mt-5 w-full max-w-full">
+      <div className="max-w-full overflow-hidden rounded-xl border border-white/10 bg-[#0b1220] sm:rounded-2xl">
+        <div className="w-full overflow-x-auto">
+          <table className="w-full min-w-[560px] border-collapse text-left sm:min-w-[620px]">
             <thead>
               <tr className="bg-cyan-400/10">
                 {table.columns.map((column) => (
                   <th
                     key={column}
-                    className="border-b border-white/10 px-4 py-4 text-sm font-bold text-cyan-200"
+                    className="border-b border-white/10 px-3 py-3 text-xs font-bold text-cyan-200 sm:px-4 sm:py-4 sm:text-sm"
                   >
                     {column}
                   </th>
@@ -414,14 +448,14 @@ function BlogTable({ section }: { section: BlogSection }) {
                       key={`${section.heading}-cell-${rowIndex}-${columnIndex}`}
                       className={
                         columnIndex === 0
-                          ? "px-4 py-4 text-sm font-semibold leading-6 text-white"
-                          : "px-4 py-4 text-sm leading-6 text-slate-300"
+                          ? "px-3 py-3 text-xs font-semibold leading-6 text-white sm:px-4 sm:py-4 sm:text-sm"
+                          : "px-3 py-3 text-xs leading-6 text-slate-300 sm:px-4 sm:py-4 sm:text-sm"
                       }
                     >
                       <HtmlText
                         as="span"
                         html={row[columnIndex] || ""}
-                        className="[&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
+                        className="break-words [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
                       />
                     </td>
                   ))}
@@ -438,7 +472,7 @@ function BlogTable({ section }: { section: BlogSection }) {
             <HtmlText
               key={`${section.heading}-note-${index}`}
               html={note}
-              className="text-base leading-8 text-slate-300 [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
+              className="break-words text-sm leading-7 text-slate-300 sm:text-base sm:leading-8 [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
             />
           ))}
         </div>
@@ -455,10 +489,10 @@ function FaqBlock({ section }: { section: BlogSection }) {
       {faqs.map((faq, index) => (
         <div
           key={`${section.heading}-faq-${index}`}
-          className="rounded-2xl border border-white/10 bg-[#0b1220] p-5"
+          className="rounded-xl border border-white/10 bg-[#0b1220] p-4 sm:rounded-2xl sm:p-5"
         >
-          <div className="flex gap-4">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cyan-400 text-sm font-black text-[#07111f]">
+          <div className="flex gap-3 sm:gap-4">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cyan-400 text-xs font-black text-[#07111f] sm:h-8 sm:w-8 sm:text-sm">
               {index + 1}
             </div>
 
@@ -466,13 +500,13 @@ function FaqBlock({ section }: { section: BlogSection }) {
               <HtmlText
                 as="h3"
                 html={faq.question}
-                className="text-base font-bold leading-7 text-white [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
+                className="break-words text-sm font-bold leading-6 text-white sm:text-base sm:leading-7 [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
               />
 
               {faq.answer && (
                 <HtmlText
                   html={faq.answer}
-                  className="mt-2 text-sm leading-7 text-slate-300 [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
+                  className="mt-2 break-words text-sm leading-7 text-slate-300 [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
                 />
               )}
             </div>
@@ -495,10 +529,10 @@ function BulletList({ bullets }: { bullets: string[] }) {
           return (
             <li
               key={`${index}-${bullet}`}
-              className="rounded-2xl border border-white/10 bg-[#0b1220] p-5"
+              className="rounded-xl border border-white/10 bg-[#0b1220] p-4 sm:rounded-2xl sm:p-5"
             >
-              <div className="flex gap-4">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cyan-400 text-sm font-black text-[#07111f]">
+              <div className="flex gap-3 sm:gap-4">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cyan-400 text-xs font-black text-[#07111f] sm:h-8 sm:w-8 sm:text-sm">
                   {index + 1}
                 </div>
 
@@ -506,13 +540,13 @@ function BulletList({ bullets }: { bullets: string[] }) {
                   <HtmlText
                     as="h3"
                     html={step.title}
-                    className="text-base font-bold leading-7 text-white [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
+                    className="break-words text-sm font-bold leading-6 text-white sm:text-base sm:leading-7 [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
                   />
 
                   {step.description && (
                     <HtmlText
                       html={step.description}
-                      className="mt-1 text-sm leading-7 text-slate-300 [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
+                      className="mt-1 break-words text-sm leading-7 text-slate-300 [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
                     />
                   )}
                 </div>
@@ -529,14 +563,14 @@ function BulletList({ bullets }: { bullets: string[] }) {
       {bullets.map((bullet, bulletIndex) => (
         <li
           key={`${bulletIndex}-${bullet}`}
-          className="flex gap-3 rounded-xl border border-white/10 bg-[#0b1220] px-4 py-3 text-sm leading-6 text-slate-300"
+          className="flex gap-3 rounded-xl border border-white/10 bg-[#0b1220] px-3 py-3 text-sm leading-6 text-slate-300 sm:px-4"
         >
-          <span className="mt-0.5 text-cyan-300">✓</span>
+          <span className="mt-0.5 shrink-0 text-cyan-300">✓</span>
 
           <HtmlText
             as="span"
             html={bullet}
-            className="[&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
+            className="min-w-0 break-words [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
           />
         </li>
       ))}
@@ -560,22 +594,30 @@ function BlogSectionBlock({
   return (
     <section
       className={[
-        index === 0 ? "" : minorHeading || !hasHeading ? "mt-7" : "mt-10",
-        showDivider ? "border-t border-white/10 pt-8" : "",
+        "min-w-0",
+        index === 0 ? "" : minorHeading || !hasHeading ? "mt-7" : "mt-9 sm:mt-10",
+        showDivider ? "border-t border-white/10 pt-7 sm:pt-8" : "",
       ]
         .filter(Boolean)
         .join(" ")}
     >
       {hasHeading &&
         (minorHeading ? (
-          <h3 className="text-xl font-bold leading-snug text-cyan-100">
+          <h3 className="break-words text-lg font-bold leading-snug text-cyan-100 sm:text-xl">
             {section.heading}
           </h3>
         ) : (
-          <h2 className="text-2xl font-bold leading-snug text-white">
+          <h2 className="break-words text-xl font-bold leading-snug text-white sm:text-2xl">
             {section.heading}
           </h2>
         ))}
+
+      {section.innerImage && (
+        <InnerBlogImage
+          image={section.innerImage}
+          fallbackAlt={section.heading || "Veyoscan blog image"}
+        />
+      )}
 
       {faqSection ? (
         <FaqBlock section={section} />
@@ -589,7 +631,7 @@ function BlogSectionBlock({
                 <HtmlText
                   key={`${paragraphIndex}-${paragraph}`}
                   html={paragraph}
-                  className="text-base leading-8 text-slate-300 [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
+                  className="break-words text-sm leading-7 text-slate-300 sm:text-base sm:leading-8 [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
                 />
               ))}
             </div>
@@ -641,7 +683,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-[#070b14] text-white">
+    <main className="min-h-screen overflow-x-hidden bg-[#070b14] text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -650,7 +692,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
       />
 
       <section className="border-b border-white/10 bg-[#080d18]">
-        <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-8 sm:py-10 lg:px-10">
           <Link
             href="/blogs"
             className="inline-flex text-sm font-semibold text-cyan-300 hover:text-cyan-200"
@@ -658,7 +700,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
             ← Back to Blogs
           </Link>
 
-          <div className="mt-8">
+          <div className="mt-7 sm:mt-8">
             <div className="mb-4 flex flex-wrap items-center gap-3">
               <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300">
                 {blog.category}
@@ -667,31 +709,31 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
               <span className="text-xs text-slate-400">{blog.readTime}</span>
             </div>
 
-            <h1 className="text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl">
+            <h1 className="max-w-4xl break-words text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
               {blog.title}
             </h1>
 
-            <p className="mt-5 max-w-3xl text-base leading-7 text-slate-300 sm:text-lg">
+            <p className="mt-5 max-w-3xl break-words text-sm leading-7 text-slate-300 sm:text-base lg:text-lg">
               {blog.excerpt}
             </p>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-5 py-10 sm:px-8 lg:px-10">
-        <div className="relative mb-10 aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-slate-900">
+      <section className="mx-auto max-w-5xl px-4 py-8 sm:px-8 sm:py-10 lg:px-10">
+        <div className="relative mb-8 aspect-video w-full max-w-full overflow-hidden rounded-xl border border-white/10 bg-slate-900 sm:mb-10 sm:rounded-2xl">
           <Image
             src={blog.thumbnail}
             alt={blog.title}
             fill
             priority
-            className="object-cover"
-            sizes="(max-width: 1024px) 100vw, 1024px"
+            className="object-contain"
+            sizes="(max-width: 480px) calc(100vw - 32px), (max-width: 768px) calc(100vw - 64px), (max-width: 1024px) calc(100vw - 80px), 1024px"
           />
         </div>
 
-        <div className="grid gap-10 lg:grid-cols-[1fr_280px]">
-          <article className="rounded-2xl border border-white/10 bg-[#101827] p-6 sm:p-8">
+        <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-10">
+          <article className="min-w-0 rounded-xl border border-white/10 bg-[#101827] p-4 sm:rounded-2xl sm:p-6 lg:p-8">
             {blog.sections.map((section, index) => (
               <BlogSectionBlock
                 key={`${section.heading || "section"}-${index}`}
@@ -700,27 +742,27 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
               />
             ))}
 
-            <div className="mt-10 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-6">
-              <h3 className="text-2xl font-bold text-white">
+            <div className="mt-9 rounded-xl border border-cyan-400/20 bg-cyan-400/10 p-4 sm:mt-10 sm:rounded-2xl sm:p-6">
+              <h3 className="break-words text-xl font-bold text-white sm:text-2xl">
                 {blog.ctaTitle}
               </h3>
 
               <p
-                className="mt-3 text-sm leading-7 text-slate-300 [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
+                className="mt-3 break-words text-sm leading-7 text-slate-300 [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
                 dangerouslySetInnerHTML={{ __html: blog.ctaDescription }}
               />
 
-              <div className="mt-5 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <Link
                   href="/get-qr"
-                  className="rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-[#07111f] transition hover:bg-cyan-300"
+                  className="inline-flex w-full justify-center rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-[#07111f] transition hover:bg-cyan-300 sm:w-auto"
                 >
                   Get Your QR
                 </Link>
 
                 <Link
                   href="/contact"
-                  className="rounded-xl border border-white/15 px-5 py-3 text-sm font-bold text-white transition hover:border-cyan-300/50"
+                  className="inline-flex w-full justify-center rounded-xl border border-white/15 px-5 py-3 text-sm font-bold text-white transition hover:border-cyan-300/50 sm:w-auto"
                 >
                   Contact Us
                 </Link>
@@ -728,8 +770,8 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
             </div>
           </article>
 
-          <aside className="space-y-6">
-            <div className="rounded-2xl border border-white/10 bg-[#101827] p-5">
+          <aside className="min-w-0 space-y-6 lg:sticky lg:top-24 lg:self-start">
+            <div className="rounded-xl border border-white/10 bg-[#101827] p-4 sm:rounded-2xl sm:p-5">
               <h3 className="text-sm font-bold uppercase tracking-widest text-cyan-300">
                 Blog Topics
               </h3>
@@ -738,7 +780,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
                 {blogTopics.map((section, index) => (
                   <p
                     key={`${section.heading}-${index}`}
-                    className="border-b border-white/10 pb-3 text-sm leading-6 text-slate-300 last:border-b-0 last:pb-0"
+                    className="break-words border-b border-white/10 pb-3 text-sm leading-6 text-slate-300 last:border-b-0 last:pb-0"
                   >
                     {index + 1}. {section.heading}
                   </p>
@@ -747,7 +789,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
             </div>
 
             {relatedBlogs.length > 0 && (
-              <div className="rounded-2xl border border-white/10 bg-[#101827] p-5">
+              <div className="rounded-xl border border-white/10 bg-[#101827] p-4 sm:rounded-2xl sm:p-5">
                 <h3 className="text-sm font-bold uppercase tracking-widest text-cyan-300">
                   Related Blogs
                 </h3>
@@ -761,7 +803,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
                     >
                       <p className="text-xs text-cyan-300">{item.category}</p>
 
-                      <h4 className="mt-2 text-sm font-semibold leading-6 text-white">
+                      <h4 className="mt-2 break-words text-sm font-semibold leading-6 text-white">
                         {item.title}
                       </h4>
                     </Link>

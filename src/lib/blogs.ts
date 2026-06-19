@@ -13,6 +13,11 @@ export type BlogPost = {
     heading: string;
     body: string[];
     bullets?: string[];
+    innerImage?: {
+      src: string;
+      alt: string;
+      caption?: string;
+    };
   }[];
   ctaTitle: string;
   ctaDescription: string;
@@ -61,6 +66,11 @@ export const blogs: BlogPost[] = [
         "Finding parking space has become increasingly difficult in residential societies, office complexes, shopping malls, and public areas.",
         "Even responsible drivers can accidentally face situations such as:",
       ],
+       innerImage: {
+    src: "/blogs/inner1.png",
+    alt: "Smart QR Tag use cases",
+    caption: "One scan can help during emergencies, parking issues and lost item recovery.",
+  },
       bullets: [
         "Blocking another vehicle",
         "Parking too close to an entrance",
@@ -365,6 +375,11 @@ export const blogs: BlogPost[] = [
         "When someone scans the QR code using their smartphone camera, they can access contact options and communicate with the vehicle owner without needing direct access to their personal phone number.",
         "A smart vehicle QR code can be used for:",
       ],
+       innerImage: {
+    src: "/blogs/inner1.png",
+    alt: "Smart QR Tag use cases",
+    caption: "One scan can help during emergencies, parking issues and lost item recovery.",
+  },
       bullets: [
         "Parking communication",
         "Emergency contact",
@@ -594,6 +609,11 @@ export const blogs: BlogPost[] = [
     {
       heading: "Why Emergency Communication Matters More Than Ever",
       body: ["Emergencies can happen at any time.", "Examples include:"],
+      innerImage: {
+    src: "/blogs/inner1.png",
+    alt: "Smart QR Tag use cases",
+    caption: "One scan can help during emergencies, parking issues and lost item recovery.",
+  },
       bullets: [
         "Road accidents",
         "Medical emergencies",
@@ -814,6 +834,9 @@ export const blogs: BlogPost[] = [
 
 
 
+
+
+
 {
   slug: "5-real-life-situations-smart-qr-tag-lifesaver",
   title: "5 Real-Life Situations Where a Smart QR Tag Becomes a Lifesaver",
@@ -847,6 +870,11 @@ export const blogs: BlogPost[] = [
         "A <a href='/' class='text-emerald-600 font-semibold hover:underline'>smart QR tag</a> is a scannable QR code linked to important contact or safety information. When someone scans the tag using a smartphone camera, they can instantly connect with the owner, access emergency contacts, or report important information. Smart QR tags are commonly used on vehicles, helmets, bags, keys, ID cards, and pet collars to improve safety and communication during emergencies.",
         "As digital safety solutions become more popular, smart QR tags are becoming an essential everyday safety tool in 2026.",
       ],
+      innerImage: {
+    src: "/blogs/inner1.png",
+    alt: "Smart QR Tag use cases",
+    caption: "One scan can help during emergencies, parking issues and lost item recovery.",
+  },
     },
     {
       heading: "Why Smart QR Tags Matter",
@@ -1071,6 +1099,9 @@ export const blogs: BlogPost[] = [
 
 
 
+
+
+
 {
   slug: "lost-item-qr-for-wallet-phone-keys",
   title: "Lost Item QR: The Smart Way to Recover Wallets, Phones, Keys & Bags",
@@ -1108,6 +1139,11 @@ export const blogs: BlogPost[] = [
       body: [
         "A Lost Item QR is a smart QR code sticker or tag attached to personal belongings such as wallets, keys, phones, bags, laptops and luggage. When someone finds the item, they can scan the QR code and securely contact the owner, increasing the chances of recovering the lost item quickly without exposing personal information publicly.",
       ],
+      innerImage: {
+    src: "/blogs/inner1.png",
+    alt: "Smart QR Tag use cases",
+    caption: "One scan can help during emergencies, parking issues and lost item recovery.",
+  },
     },
     {
       heading: "Why Are Lost Items So Difficult to Recover?",
@@ -1263,6 +1299,8 @@ export const blogs: BlogPost[] = [
 
 
 
+
+
 {
   slug: "why-every-family-needs-an-emergency-qr-code",
   title: "Why Every Family Needs an Emergency QR Code",
@@ -1300,6 +1338,11 @@ export const blogs: BlogPost[] = [
       body: [
         "An Emergency QR Code is a smart QR code that gives instant access to important emergency contact information when scanned. It functions as an emergency contact QR code that helps family members, responders, or finders quickly reach the right person during urgent situations. It can help family members, bystanders, emergency responders, or finders quickly reach the right person during medical emergencies, accidents, lost-item situations, or other urgent events. By combining accessibility with privacy, emergency QR codes help families stay prepared for unexpected situations.",
       ],
+      innerImage: {
+    src: "/blogs/inner1.png",
+    alt: "Smart QR Tag use cases",
+    caption: "One scan can help during emergencies, parking issues and lost item recovery.",
+  },
     },
     {
       heading: "How Does an Emergency QR Code Work?",
@@ -1487,6 +1530,8 @@ export const blogs: BlogPost[] = [
 
 
 
+
+
 {
   slug: "house-society-qr-for-visitors-security",
   title: "House & Society QR: Smarter Visitor Communication for Modern Homes",
@@ -1518,6 +1563,11 @@ export const blogs: BlogPost[] = [
         "This is where <a href=\"/get-qr/house\">House & Society QR</a> technology offers a smarter solution.",
         "With a simple <a href=\"/\">QR code</a> placed at the entrance, gate, door, or society access point, visitors can securely connect with residents without requiring personal information to be displayed publicly.",
       ],
+      innerImage: {
+    src: "/blogs/inner1.png",
+    alt: "Smart QR Tag use cases",
+    caption: "One scan can help during emergencies, parking issues and lost item recovery.",
+  },
     },
     {
       heading: "What Is a House & Society QR?",
