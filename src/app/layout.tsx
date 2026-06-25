@@ -6,6 +6,7 @@ import "./globals.css";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Script from "next/script";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -517,46 +518,48 @@ export default function RootLayout({
     },
   };
 
-  return (
+ return (
   <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable}`}
-    >
-      <body className="antialiased bg-[#0b0f1a] text-white overflow-x-hidden">
+    lang="en"
+    className={`${geistSans.variable} ${geistMono.variable}`}
+  >
+    <body className="antialiased bg-[#0b0f1a] text-white overflow-x-hidden">
+      {/* ===== GOOGLE ANALYTICS ===== */}
+      <GoogleAnalytics />
 
-        {/* ===== HEADER (FIXED) ===== */}
-        <header className="fixed top-0 left-0 w-full z-50 h-16 md:h-20">
-          <Header />
-        </header>
+      {/* ===== HEADER (FIXED) ===== */}
+      <header className="fixed top-0 left-0 w-full z-50 h-16 md:h-20">
+        <Header />
+      </header>
 
-        {/* ===== MAIN CONTENT (NO GAP ISSUE FIXED) ===== */}
-        <main
-          id="main-content"
-          role="main"
-          className="pt-16 md:pt-20" // ✅ mobile header 64px, desktop header 80px
-        >
-          {children}
-        </main>
+      {/* ===== MAIN CONTENT (NO GAP ISSUE FIXED) ===== */}
+      <main
+        id="main-content"
+        role="main"
+        className="pt-16 md:pt-20"
+      >
+        {children}
+      </main>
 
-        {/* ===== FOOTER ===== */}
-        <Footer />
+      {/* ===== FOOTER ===== */}
+      <Footer />
 
-        <Script
-          id="ld-org"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-        />
-        <Script
-          id="ld-site"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSearchJsonLd) }}
-        />
-        <Script
-          id="ld-webpage"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
-        />
-      </body>
-    </html>
-  );
+      <Script
+        id="ld-org"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
+      <Script
+        id="ld-site"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSearchJsonLd) }}
+      />
+      <Script
+        id="ld-webpage"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+      />
+    </body>
+  </html>
+);
 }

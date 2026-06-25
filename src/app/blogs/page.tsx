@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -22,11 +21,11 @@ export const metadata: Metadata = {
   },
 };
 
-const BLOG_AUTHOR = "Ms Disha Dudeja";
+const BLOG_AUTHOR = "Disha Dudeja";
 
 const blogDisplayDates = [
-  "June 4, 2026",
-  "May 27, 2026",
+  "June 24, 2026",
+  "June 2, 2026",
   "May 15, 2026",
   "May 6, 2026",
   "April 28, 2026",
@@ -37,6 +36,8 @@ const blogDisplayDates = [
 export default function BlogsPage() {
   return (
     <main className="min-h-screen bg-[#070b14] text-white">
+      
+      {/* Header */}
       <section className="border-b border-white/10 bg-[#080d18]">
         <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
           <div className="max-w-3xl">
@@ -44,7 +45,7 @@ export default function BlogsPage() {
               Veyoscan Blogs
             </p>
 
-            <h1 className="mt-4 text-4xl font-bold tracking-tight text-white sm:text-5xl">
+            <h1 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white">
               Smart QR Guides for Everyday Use
             </h1>
 
@@ -57,7 +58,9 @@ export default function BlogsPage() {
         </div>
       </section>
 
+      {/* Blogs */}
       <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 lg:px-10">
+        
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="text-2xl font-bold text-white sm:text-3xl">
@@ -70,7 +73,9 @@ export default function BlogsPage() {
           </div>
         </div>
 
-        <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
+        {/* Grid */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          
           {blogs.map((blog, index) => {
             const displayDate =
               blogDisplayDates[index] || blog.date || "2026";
@@ -78,21 +83,28 @@ export default function BlogsPage() {
             return (
               <article
                 key={blog.slug}
-                className="overflow-hidden rounded-2xl border border-white/10 bg-[#101827] transition hover:-translate-y-1 hover:border-cyan-400/40 hover:shadow-2xl hover:shadow-cyan-950/30"
+                className="group overflow-hidden rounded-2xl border border-white/10 bg-[#101827] transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:shadow-xl"
               >
                 <Link href={`/blogs/${blog.slug}`} className="block">
-                  <div className="relative h-56 bg-slate-900">
+
+                  {/* ✅ FINAL IMAGE FIX */}
+                  <div className="relative w-full h-48 sm:h-56 md:h-60 bg-slate-900 overflow-hidden">
                     <Image
                       src={blog.thumbnail}
                       alt={blog.title}
                       fill
-                      className="object-cover transition duration-500 hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition duration-700 ease-out group-hover:scale-110"
+                      sizes="(max-width: 640px) 100vw,
+                             (max-width: 1024px) 50vw,
+                             33vw"
+                      priority={index === 0}
                     />
                   </div>
 
-                  <div className="p-6">
-                    <div className="mb-4 flex items-center justify-between gap-4">
+                  {/* Content */}
+                  <div className="p-5 sm:p-6">
+                    
+                    <div className="mb-3 flex items-center justify-between gap-4">
                       <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300">
                         {blog.category}
                       </span>
@@ -102,7 +114,7 @@ export default function BlogsPage() {
                       </span>
                     </div>
 
-                    <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
+                    <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
                       <span>
                         By{" "}
                         <span className="font-semibold text-slate-200">
@@ -112,27 +124,30 @@ export default function BlogsPage() {
 
                       <span className="text-slate-600">•</span>
 
-                      <time dateTime={displayDate} className="text-slate-400">
+                      <time dateTime={displayDate}>
                         {displayDate}
                       </time>
                     </div>
 
-                    <h3 className="text-xl font-bold leading-snug text-white">
+                    <h3 className="text-base sm:text-lg md:text-xl font-bold leading-snug text-white">
                       {blog.title}
                     </h3>
 
-                    <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-300">
+                    <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-300">
                       {blog.excerpt}
                     </p>
 
-                    <div className="mt-5 inline-flex text-sm font-semibold text-cyan-300">
+                    <div className="mt-4 inline-flex text-sm font-semibold text-cyan-300">
                       Read Full Blog →
                     </div>
+
                   </div>
+
                 </Link>
               </article>
             );
           })}
+
         </div>
       </section>
     </main>

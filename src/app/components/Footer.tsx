@@ -10,11 +10,30 @@ import {
   FaInstagram,
   FaFacebookF,
   FaYoutube,
+  FaLinkedinIn,
+  FaArrowUp,
 } from "react-icons/fa";
 
 export default function Footer() {
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <footer className="relative bg-[#050b14] text-white overflow-hidden pt-16 pb-6">
+      
+      {/* Back to Top Button */}
+      <button
+        onClick={scrollToTop}
+        className="fixed bottom-6 right-6 z-50 bg-cyan-400 text-black p-3 rounded-full shadow-lg hover:scale-110 transition"
+      >
+        <FaArrowUp />
+      </button>
+
       {/* animated bg glow */}
       <motion.div
         className="pointer-events-none absolute top-0 left-1/2 h-[400px] w-[400px] -translate-x-1/2 rounded-full bg-cyan-500/10 blur-3xl"
@@ -23,6 +42,7 @@ export default function Footer() {
       />
 
       <div className="relative mx-auto max-w-7xl px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
+        
         {/* Left section */}
         <div className="relative">
           <motion.div
@@ -58,34 +78,11 @@ export default function Footer() {
             Quick Links
           </h4>
           <ul className="space-y-2 text-white/80">
-            <li>
-              <Link href="/" className="hover:text-cyan-300 transition">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link href="/about" className="hover:text-cyan-300 transition">
-                About
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/get-qr/pricing"
-                className="hover:text-cyan-300 transition"
-              >
-                Pricing
-              </Link>
-            </li>
-            <li>
-              <Link href="/use" className="hover:text-cyan-300 transition">
-                Use-Cases
-              </Link>
-            </li>
-             <li>
-              <Link href="/blogs" className="hover:text-cyan-300 transition">
-                Blogs
-              </Link>
-            </li>
+            <li><Link href="/" className="hover:text-cyan-300">Home</Link></li>
+            <li><Link href="/about" className="hover:text-cyan-300">About</Link></li>
+            <li><Link href="/get-qr/pricing" className="hover:text-cyan-300">Pricing</Link></li>
+            <li><Link href="/use" className="hover:text-cyan-300">Use-Cases</Link></li>
+            <li><Link href="/blogs" className="hover:text-cyan-300">Blogs</Link></li>
           </ul>
         </div>
 
@@ -95,21 +92,9 @@ export default function Footer() {
             Support
           </h4>
           <ul className="space-y-2 text-white/80">
-            <li>
-              <Link href="/privacy" className="hover:text-cyan-300 transition">
-                Privacy Policy
-              </Link>
-            </li>
-            <li>
-              <Link href="/privacy" className="hover:text-cyan-300 transition">
-                Terms & Conditions
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="hover:text-cyan-300 transition">
-                Help Center
-              </Link>
-            </li>
+            <li><Link href="/privacy" className="hover:text-cyan-300">Privacy Policy</Link></li>
+            <li><Link href="/privacy" className="hover:text-cyan-300">Terms & Conditions</Link></li>
+            <li><Link href="/contact" className="hover:text-cyan-300">Help Center</Link></li>
           </ul>
         </div>
       </div>
@@ -119,16 +104,15 @@ export default function Footer() {
 
       {/* Contact + CTA */}
       <div className="relative mx-auto max-w-7xl px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+        
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 text-white/80 text-sm sm:text-base">
+          
           <div className="flex items-center gap-2">
             <FaEnvelope className="text-cyan-400" />
             <span>support@veyoscan.com</span>
           </div>
 
-          <a
-            href="tel:+919643964242"
-            className="flex items-center gap-2 hover:text-cyan-300 transition"
-          >
+          <a href="tel:+919643964242" className="flex items-center gap-2 hover:text-cyan-300">
             <FaPhoneAlt className="text-cyan-400" />
             <span>+91 9643964242</span>
           </a>
@@ -136,8 +120,7 @@ export default function Footer() {
           <a
             href="https://wa.me/919643964242"
             target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 hover:text-green-400 transition"
+            className="flex items-center gap-2 hover:text-green-400"
           >
             <FaWhatsapp className="text-green-400" />
             <span>+91 9643964242</span>
@@ -145,32 +128,28 @@ export default function Footer() {
 
           {/* Social icons */}
           <div className="flex items-center gap-3 ml-0 sm:ml-4">
-            <a
-              href="https://www.instagram.com/veyoscan/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white/10 p-2 rounded-full hover:bg-pink-500/20 transition"
-            >
+            
+            <a href="https://www.instagram.com/veyoscan/" target="_blank" className="bg-white/10 p-2 rounded-full hover:bg-pink-500/20">
               <FaInstagram />
             </a>
 
-            <a
-              href="https://www.facebook.com/profile.php?id=61572231007919"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white/10 p-2 rounded-full hover:bg-blue-500/20 transition"
-            >
+            <a href="https://www.facebook.com/profile.php?id=61572231007919" target="_blank" className="bg-white/10 p-2 rounded-full hover:bg-blue-500/20">
               <FaFacebookF />
             </a>
 
-            <a
-              href="https://www.youtube.com/@veyoscan"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white/10 p-2 rounded-full hover:bg-blue-400/20 transition"
-            >
+            <a href="https://www.youtube.com/@veyoscan" target="_blank" className="bg-white/10 p-2 rounded-full hover:bg-blue-400/20">
               <FaYoutube />
             </a>
+
+            {/* ✅ LinkedIn Added */}
+            <a
+              href="https://www.linkedin.com/company/veyoscan"
+              target="_blank"
+              className="bg-white/10 p-2 rounded-full hover:bg-blue-600/20"
+            >
+              <FaLinkedinIn />
+            </a>
+
           </div>
         </div>
 

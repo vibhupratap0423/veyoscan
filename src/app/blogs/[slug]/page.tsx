@@ -16,17 +16,17 @@ type BlogInnerImage = {
   caption?: string;
 };
 
+type BlogTableContent = {
+  headers: string[];
+  rows: string[][];
+};
+
 type BlogSection = {
   heading: string;
   body: string[];
   bullets?: string[];
+  table?: BlogTableContent;
   innerImage?: BlogInnerImage;
-};
-
-type TableData = {
-  columns: string[];
-  rows: string[][];
-  notes: string[];
 };
 
 export async function generateStaticParams() {
@@ -87,180 +87,6 @@ function isFaqSection(heading: string) {
     text.includes("frequently asked questions") ||
     text.includes("people also ask")
   );
-}
-
-function isTableSection(section: BlogSection) {
-  const heading = section.heading.toLowerCase();
-  const firstBody = stripHtml(section.body[0] || "").toLowerCase();
-
-  return (
-    heading.includes(" vs ") ||
-    heading.includes("industries using") ||
-    heading.includes("benefits of emergency qr codes for families") ||
-    firstBody === "benefit advantage" ||
-    firstBody === "industry common use cases" ||
-    firstBody.includes("feature traditional")
-  );
-}
-
-function isHeaderLikeTableText(value: string) {
-  const text = stripHtml(value).toLowerCase();
-
-  return (
-    text === "feature traditional name plate house & society qr" ||
-    text === "feature traditional label lost item qr" ||
-    text === "feature traditional contact sticker smart qr sticker" ||
-    text === "feature traditional number sticker smart qr sticker" ||
-    text === "benefit advantage" ||
-    text === "industry common use cases"
-  );
-}
-
-function getTableColumns(section: BlogSection) {
-  const heading = section.heading.toLowerCase();
-  const firstBody = stripHtml(section.body[0] || "").toLowerCase();
-
-  if (heading.includes("lost item qr vs traditional name labels")) {
-    return ["Feature", "Traditional Label", "Lost Item QR"];
-  }
-
-  if (heading.includes("house & society qr vs traditional name plates")) {
-    return ["Feature", "Traditional Name Plate", "House & Society QR"];
-  }
-
-  if (heading.includes("smart qr stickers vs traditional contact stickers")) {
-    return ["Feature", "Traditional Number Sticker", "Smart QR Sticker"];
-  }
-
-  if (heading.includes("smart qr sticker vs traditional contact sticker")) {
-    return ["Feature", "Traditional Contact Sticker", "Smart QR Sticker"];
-  }
-
-  if (heading.includes("industries using")) {
-    return ["Industry", "Common Use Cases"];
-  }
-
-  if (heading.includes("benefits of emergency qr codes for families")) {
-    return ["Benefit", "Advantage"];
-  }
-
-  if (firstBody.includes("benefit advantage")) {
-    return ["Benefit", "Advantage"];
-  }
-
-  if (firstBody.includes("industry common use cases")) {
-    return ["Industry", "Common Use Cases"];
-  }
-
-  return ["Feature", "Traditional", "Smart QR"];
-}
-
-function getValueAfterColonOrDash(value: string) {
-  const text = cleanText(value);
-
-  if (text.includes(":")) {
-    return cleanText(text.split(":").slice(1).join(":"));
-  }
-
-  const dashParts = text.split(/\s-\s/);
-  if (dashParts.length > 1) {
-    return cleanText(dashParts.slice(1).join(" - "));
-  }
-
-  return text;
-}
-
-function parseTableBullet(bullet: string, columnsCount: number) {
-  const text = cleanText(bullet);
-
-  if (columnsCount === 2) {
-    const parts = text.split(/\s-\s/);
-
-    if (parts.length >= 2) {
-      return [cleanText(parts[0]), cleanText(parts.slice(1).join(" - "))];
-    }
-
-    return [text, ""];
-  }
-
-  if (text.includes("|")) {
-    const [leftRaw, rightRaw] = text.split("|");
-    const left = cleanText(leftRaw || "");
-    const right = cleanText(rightRaw || "");
-
-    let feature = left;
-    let firstValue = "";
-
-    if (left.includes("—")) {
-      const [featureRaw, valueRaw] = left.split("—");
-      feature = cleanText(featureRaw);
-      firstValue = getValueAfterColonOrDash(valueRaw || "");
-    } else if (left.includes(":")) {
-      const [featureRaw, valueRaw] = left.split(":");
-      feature = cleanText(featureRaw);
-      firstValue = getValueAfterColonOrDash(valueRaw || "");
-    } else {
-      const parts = left.split(/\s-\s/);
-      feature = cleanText(parts[0] || "");
-      firstValue = cleanText(parts.slice(1).join(" - "));
-    }
-
-    const secondValue = getValueAfterColonOrDash(right);
-
-    return [feature, firstValue, secondValue];
-  }
-
-  const dashParts = text.split(/\s-\s/);
-
-  if (dashParts.length >= 3) {
-    return [
-      cleanText(dashParts[0]),
-      cleanText(dashParts[1]),
-      cleanText(dashParts.slice(2).join(" - ")),
-    ];
-  }
-
-  if (dashParts.length === 2) {
-    return [cleanText(dashParts[0]), cleanText(dashParts[1]), ""];
-  }
-
-  return [text, "", ""];
-}
-
-function getTableData(section: BlogSection): TableData {
-  const columns = getTableColumns(section);
-  const bullets = section.bullets || [];
-
-  const rows = bullets.map((bullet) => {
-    const parsedRow = parseTableBullet(bullet, columns.length);
-    return columns.map((_, index) => parsedRow[index] || "");
-  });
-
-  const notes = section.body.filter((item) => !isHeaderLikeTableText(item));
-
-  return {
-    columns,
-    rows,
-    notes,
-  };
-}
-
-function splitFaqItems(body: string[]) {
-  const items: { question: string; answer: string }[] = [];
-
-  for (let index = 0; index < body.length; index += 2) {
-    const question = body[index];
-    const answer = body[index + 1];
-
-    if (question) {
-      items.push({
-        question,
-        answer: answer || "",
-      });
-    }
-  }
-
-  return items;
 }
 
 function isStepBullet(value: string) {
@@ -412,10 +238,8 @@ function HtmlText({
   );
 }
 
-function BlogTable({ section }: { section: BlogSection }) {
-  const table = getTableData(section);
-
-  if (table.rows.length === 0) {
+function BlogTable({ table }: { table: BlogTableContent }) {
+  if (!table.rows || table.rows.length === 0) {
     return null;
   }
 
@@ -423,15 +247,15 @@ function BlogTable({ section }: { section: BlogSection }) {
     <div className="mt-5 w-full max-w-full">
       <div className="max-w-full overflow-hidden rounded-xl border border-white/10 bg-[#0b1220] sm:rounded-2xl">
         <div className="w-full overflow-x-auto">
-          <table className="w-full min-w-[560px] border-collapse text-left sm:min-w-[620px]">
+          <table className="w-full min-w-[680px] border-collapse text-left">
             <thead>
               <tr className="bg-cyan-400/10">
-                {table.columns.map((column) => (
+                {table.headers.map((header) => (
                   <th
-                    key={column}
-                    className="border-b border-white/10 px-3 py-3 text-xs font-bold text-cyan-200 sm:px-4 sm:py-4 sm:text-sm"
+                    key={header}
+                    className="border-b border-white/10 px-4 py-4 text-sm font-bold leading-6 text-cyan-200"
                   >
-                    {column}
+                    {header}
                   </th>
                 ))}
               </tr>
@@ -440,21 +264,21 @@ function BlogTable({ section }: { section: BlogSection }) {
             <tbody>
               {table.rows.map((row, rowIndex) => (
                 <tr
-                  key={`${section.heading}-row-${rowIndex}`}
+                  key={`table-row-${rowIndex}`}
                   className="border-b border-white/10 last:border-b-0"
                 >
-                  {table.columns.map((_, columnIndex) => (
+                  {table.headers.map((_, cellIndex) => (
                     <td
-                      key={`${section.heading}-cell-${rowIndex}-${columnIndex}`}
+                      key={`table-cell-${rowIndex}-${cellIndex}`}
                       className={
-                        columnIndex === 0
-                          ? "px-3 py-3 text-xs font-semibold leading-6 text-white sm:px-4 sm:py-4 sm:text-sm"
-                          : "px-3 py-3 text-xs leading-6 text-slate-300 sm:px-4 sm:py-4 sm:text-sm"
+                        cellIndex === 0
+                          ? "px-4 py-4 align-top text-sm font-semibold leading-6 text-white"
+                          : "px-4 py-4 align-top text-sm leading-6 text-slate-300"
                       }
                     >
                       <HtmlText
                         as="span"
-                        html={row[columnIndex] || ""}
+                        html={row[cellIndex] || ""}
                         className="break-words [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
                       />
                     </td>
@@ -465,24 +289,24 @@ function BlogTable({ section }: { section: BlogSection }) {
           </table>
         </div>
       </div>
-
-      {table.notes.length > 0 && (
-        <div className="mt-5 space-y-4">
-          {table.notes.map((note, index) => (
-            <HtmlText
-              key={`${section.heading}-note-${index}`}
-              html={note}
-              className="break-words text-sm leading-7 text-slate-300 sm:text-base sm:leading-8 [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 }
 
 function FaqBlock({ section }: { section: BlogSection }) {
-  const faqs = splitFaqItems(section.body);
+  const faqs: { question: string; answer: string }[] = [];
+
+  for (let index = 0; index < section.body.length; index += 2) {
+    const question = section.body[index];
+    const answer = section.body[index + 1];
+
+    if (question) {
+      faqs.push({
+        question,
+        answer: answer || "",
+      });
+    }
+  }
 
   return (
     <div className="mt-5 space-y-4">
@@ -559,18 +383,20 @@ function BulletList({ bullets }: { bullets: string[] }) {
   }
 
   return (
-    <ul className="mt-5 grid gap-3">
+    <ul className="mt-5 grid gap-3 lg:grid-cols-2">
       {bullets.map((bullet, bulletIndex) => (
         <li
           key={`${bulletIndex}-${bullet}`}
-          className="flex gap-3 rounded-xl border border-white/10 bg-[#0b1220] px-3 py-3 text-sm leading-6 text-slate-300 sm:px-4"
+          className="group flex gap-3 rounded-xl border border-white/10 bg-[#0b1220] px-3 py-3 text-sm leading-6 text-slate-300 transition-all duration-200 hover:border-cyan-400/40 hover:bg-cyan-400/[0.04] sm:px-4 lg:min-h-[92px] lg:p-5"
         >
-          <span className="mt-0.5 shrink-0 text-cyan-300">✓</span>
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cyan-400/10 text-sm font-bold text-cyan-300 transition group-hover:bg-cyan-400 group-hover:text-[#07111f]">
+            ✓
+          </span>
 
           <HtmlText
             as="span"
             html={bullet}
-            className="min-w-0 break-words [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
+            className="min-w-0 break-words pt-0.5 font-medium text-slate-200 [&_a]:font-semibold [&_a]:text-cyan-300 [&_a]:underline-offset-4 hover:[&_a]:underline"
           />
         </li>
       ))}
@@ -588,7 +414,6 @@ function BlogSectionBlock({
   const hasHeading = Boolean(section.heading);
   const minorHeading = hasHeading && isMinorHeading(section.heading);
   const showDivider = shouldShowDivider(section, index);
-  const tableSection = isTableSection(section);
   const faqSection = isFaqSection(section.heading);
 
   return (
@@ -621,8 +446,6 @@ function BlogSectionBlock({
 
       {faqSection ? (
         <FaqBlock section={section} />
-      ) : tableSection ? (
-        <BlogTable section={section} />
       ) : (
         <>
           {section.body.length > 0 && (
@@ -637,7 +460,9 @@ function BlogSectionBlock({
             </div>
           )}
 
-          {section.bullets && section.bullets.length > 0 && (
+          {section.table && <BlogTable table={section.table} />}
+
+          {!section.table && section.bullets && section.bullets.length > 0 && (
             <BulletList bullets={section.bullets} />
           )}
         </>
