@@ -51,7 +51,7 @@ export const blogs: BlogPost[] = [
   category: "Vehicle QR",
   readTime: "5 min read",
   date: "2026",
-  thumbnail: "/blogs/carowner.png",
+  thumbnail: "/blogs/parkingemergencies.png",
   excerpt:
     "QR stickers for cars allow anyone facing a parking issue to instantly contact the vehicle owner through a secure communication channel. They help reduce towing risks, resolve parking disputes faster, improve vehicle safety, and protect personal privacy without displaying a phone number publicly.",
   sections: [
@@ -107,10 +107,10 @@ export const blogs: BlogPost[] = [
         "Steps :",
       ],
       bullets: [
-        "1. Scan the QR code.",
-        "2. Access contact options instantly.",
-        "3. Notify the vehicle owner.",
-        "4. Resolve the issue quickly.",
+        " Scan the QR code.",
+        " Access contact options instantly.",
+        " Notify the vehicle owner.",
+        " Resolve the issue quickly.",
       ],
     },
     {
@@ -123,12 +123,12 @@ export const blogs: BlogPost[] = [
       heading: "Benefits of Using QR Stickers for Cars",
       body: [],
       bullets: [
-        "1. Instant Contact",
-        "2. Improved Vehicle Safety",
-        "3. Better Privacy",
-        "4. Contactless Communication",
-        "5. Easy to Use",
-        "6. Affordable Solution",
+        " Instant Contact",
+        " Improved Vehicle Safety",
+        " Better Privacy",
+        " Contactless Communication",
+        " Easy to Use",
+        " Affordable Solution",
       ],
     },
     {
@@ -348,17 +348,15 @@ export const blogs: BlogPost[] = [
         "The primary challenge in most parking emergencies is a communication gap. A <a href='/' class='text-emerald-600 font-semibold hover:underline'>smart QR sticker for car</a> bridges that gap by providing a simple, secure, and instant way for people to contact the vehicle owner when it matters most. This makes <a href='/get-qr/vehicle' class='text-emerald-600 font-semibold hover:underline'>QR stickers for car parking emergencies</a> a practical solution for modern vehicle owners looking to avoid unnecessary stress, delays, and disputes.",
       ],
     },
-    {
-      heading: "Ready to Protect Your Vehicle?",
-      body: [
-        "<a href='/' class='text-emerald-600 font-semibold hover:underline'>VeyoScan</a> QR stickers for cars help vehicle owners receive instant notifications during parking disputes, towing risks, blocked exits, and vehicle safety concerns - without displaying personal phone numbers. Try a <a href='/get-qr/order?type=vehicle' class='text-emerald-600 font-semibold hover:underline'>smart QR sticker</a> today and make your vehicle easier to reach, safer and more secure.",
-      ],
-    },
+
   ],
   ctaTitle: "Ready to Protect Your Vehicle?",
   ctaDescription:
     "<a href='/' class='text-emerald-600 font-semibold hover:underline'>VeyoScan</a> QR stickers for cars help vehicle owners receive instant notifications during parking disputes, towing risks, blocked exits, and vehicle safety concerns - without displaying personal phone numbers. Try a <a href='/get-qr/order?type=vehicle' class='text-emerald-600 font-semibold hover:underline'>smart QR sticker</a> today and make your vehicle easier to reach, safer and more secure.",
 },
+
+
+
 
 
 
@@ -391,12 +389,7 @@ export const blogs: BlogPost[] = [
   excerpt:
     "Modern vehicle owners face parking challenges, privacy concerns, and communication gaps. A smart QR code for cars provides a simple way to stay reachable during emergencies and parking-related situations without displaying personal phone numbers publicly.",
   sections: [
-    {
-      heading: "",
-      body: [
-        "Modern vehicle owners face parking challenges, privacy concerns, and communication gaps. A <a href='/get-qr/vehicle' class='text-emerald-600 font-semibold hover:underline'>smart QR code for cars</a> provides a simple way to stay reachable during emergencies and parking-related situations without displaying personal phone numbers publicly.",
-      ],
-    },
+    
     {
       heading: "Why does every car owner need a smart QR code in 2026?",
       body: [

@@ -47,6 +47,12 @@ export async function generateMetadata({
     };
   }
 
+  const firstInnerImage = blog.sections.find(
+    (section) => section.innerImage?.src
+  )?.innerImage;
+
+  const metaImage = firstInnerImage?.src || blog.thumbnail;
+
   return {
     title: blog.metaTitle,
     description: blog.metaDescription,
@@ -62,10 +68,10 @@ export async function generateMetadata({
       type: "article",
       images: [
         {
-          url: blog.thumbnail,
+          url: metaImage,
           width: 1200,
           height: 630,
-          alt: blog.title,
+          alt: firstInnerImage?.alt || blog.title,
         },
       ],
     },
@@ -176,6 +182,27 @@ function InnerBlogImage({
   );
 }
 
+function HeroInnerImage({
+  image,
+  fallbackAlt,
+}: {
+  image: BlogInnerImage;
+  fallbackAlt: string;
+}) {
+  return (
+    <div className="relative mb-8 aspect-[688/400] w-full max-w-full overflow-hidden rounded-xl border border-white/10 bg-[#0b1220] sm:mb-10 sm:rounded-2xl">
+      <Image
+        src={image.src}
+        alt={image.alt || fallbackAlt}
+        fill
+        priority
+        className="object-contain"
+        sizes="(max-width: 480px) calc(100vw - 32px), (max-width: 768px) calc(100vw - 64px), (max-width: 1024px) calc(100vw - 80px), 1024px"
+      />
+    </div>
+  );
+}
+
 function HtmlText({
   html,
   as = "p",
@@ -196,45 +223,30 @@ function HtmlText({
 
   if (as === "div") {
     return (
-      <div
-        className={className}
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+      <div className={className} dangerouslySetInnerHTML={{ __html: html }} />
     );
   }
 
   if (as === "h2") {
     return (
-      <h2
-        className={className}
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+      <h2 className={className} dangerouslySetInnerHTML={{ __html: html }} />
     );
   }
 
   if (as === "h3") {
     return (
-      <h3
-        className={className}
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+      <h3 className={className} dangerouslySetInnerHTML={{ __html: html }} />
     );
   }
 
   if (as === "h4") {
     return (
-      <h4
-        className={className}
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+      <h4 className={className} dangerouslySetInnerHTML={{ __html: html }} />
     );
   }
 
   return (
-    <p
-      className={className}
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+    <p className={className} dangerouslySetInnerHTML={{ __html: html }} />
   );
 }
 
@@ -407,9 +419,11 @@ function BulletList({ bullets }: { bullets: string[] }) {
 function BlogSectionBlock({
   section,
   index,
+  hideInnerImage = false,
 }: {
   section: BlogSection;
   index: number;
+  hideInnerImage?: boolean;
 }) {
   const hasHeading = Boolean(section.heading);
   const minorHeading = hasHeading && isMinorHeading(section.heading);
@@ -437,7 +451,7 @@ function BlogSectionBlock({
           </h2>
         ))}
 
-      {section.innerImage && (
+      {!hideInnerImage && section.innerImage && (
         <InnerBlogImage
           image={section.innerImage}
           fallbackAlt={section.heading || "Veyoscan blog image"}
@@ -485,12 +499,21 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
     (section) => section.heading && !isMinorHeading(section.heading)
   );
 
+  const heroInnerImageSectionIndex = blog.sections.findIndex(
+    (section) => section.innerImage?.src
+  );
+
+  const heroInnerImage =
+    heroInnerImageSectionIndex >= 0
+      ? blog.sections[heroInnerImageSectionIndex].innerImage
+      : undefined;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: blog.title,
     description: blog.metaDescription,
-    image: blog.thumbnail,
+    image: heroInnerImage?.src || blog.thumbnail,
     author: {
       "@type": "Organization",
       name: "Veyoscan",
@@ -546,16 +569,10 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
       </section>
 
       <section className="mx-auto max-w-5xl px-4 py-8 sm:px-8 sm:py-10 lg:px-10">
-        <div className="relative mb-8 aspect-video w-full max-w-full overflow-hidden rounded-xl border border-white/10 bg-slate-900 sm:mb-10 sm:rounded-2xl">
-          <Image
-            src={blog.thumbnail}
-            alt={blog.title}
-            fill
-            priority
-            className="object-contain"
-            sizes="(max-width: 480px) calc(100vw - 32px), (max-width: 768px) calc(100vw - 64px), (max-width: 1024px) calc(100vw - 80px), 1024px"
-          />
-        </div>
+        {/* ✅ Thumbnail removed. Now first innerImage will show here */}
+        {heroInnerImage && (
+          <HeroInnerImage image={heroInnerImage} fallbackAlt={blog.title} />
+        )}
 
         <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-10">
           <article className="min-w-0 rounded-xl border border-white/10 bg-[#101827] p-4 sm:rounded-2xl sm:p-6 lg:p-8">
@@ -564,6 +581,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
                 key={`${section.heading || "section"}-${index}`}
                 section={section}
                 index={index}
+                hideInnerImage={index === heroInnerImageSectionIndex}
               />
             ))}
 

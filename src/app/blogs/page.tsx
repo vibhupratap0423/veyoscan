@@ -36,7 +36,6 @@ const blogDisplayDates = [
 export default function BlogsPage() {
   return (
     <main className="min-h-screen bg-[#070b14] text-white">
-      
       {/* Header */}
       <section className="border-b border-white/10 bg-[#080d18]">
         <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
@@ -45,7 +44,7 @@ export default function BlogsPage() {
               Veyoscan Blogs
             </p>
 
-            <h1 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white">
+            <h1 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
               Smart QR Guides for Everyday Use
             </h1>
 
@@ -60,7 +59,6 @@ export default function BlogsPage() {
 
       {/* Blogs */}
       <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 lg:px-10">
-        
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="text-2xl font-bold text-white sm:text-3xl">
@@ -75,10 +73,8 @@ export default function BlogsPage() {
 
         {/* Grid */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          
           {blogs.map((blog, index) => {
-            const displayDate =
-              blogDisplayDates[index] || blog.date || "2026";
+            const displayDate = blogDisplayDates[index] || blog.date || "2026";
 
             return (
               <article
@@ -86,14 +82,13 @@ export default function BlogsPage() {
                 className="group overflow-hidden rounded-2xl border border-white/10 bg-[#101827] transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:shadow-xl"
               >
                 <Link href={`/blogs/${blog.slug}`} className="block">
-
-                  {/* ✅ FINAL IMAGE FIX */}
-                  <div className="relative w-full h-48 sm:h-56 md:h-60 bg-slate-900 overflow-hidden">
+                  {/* ✅ DESKTOP IMAGE FIXED - FULL IMAGE SHOW, NO CROP */}
+                  <div className="relative w-full aspect-[16/9] overflow-hidden bg-white">
                     <Image
                       src={blog.thumbnail}
                       alt={blog.title}
                       fill
-                      className="object-cover transition duration-700 ease-out group-hover:scale-110"
+                      className="object-contain transition duration-500 ease-out group-hover:scale-[1.02]"
                       sizes="(max-width: 640px) 100vw,
                              (max-width: 1024px) 50vw,
                              33vw"
@@ -103,7 +98,6 @@ export default function BlogsPage() {
 
                   {/* Content */}
                   <div className="p-5 sm:p-6">
-                    
                     <div className="mb-3 flex items-center justify-between gap-4">
                       <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300">
                         {blog.category}
@@ -124,12 +118,10 @@ export default function BlogsPage() {
 
                       <span className="text-slate-600">•</span>
 
-                      <time dateTime={displayDate}>
-                        {displayDate}
-                      </time>
+                      <time dateTime={displayDate}>{displayDate}</time>
                     </div>
 
-                    <h3 className="text-base sm:text-lg md:text-xl font-bold leading-snug text-white">
+                    <h3 className="text-base font-bold leading-snug text-white sm:text-lg md:text-xl">
                       {blog.title}
                     </h3>
 
@@ -140,14 +132,11 @@ export default function BlogsPage() {
                     <div className="mt-4 inline-flex text-sm font-semibold text-cyan-300">
                       Read Full Blog →
                     </div>
-
                   </div>
-
                 </Link>
               </article>
             );
           })}
-
         </div>
       </section>
     </main>
