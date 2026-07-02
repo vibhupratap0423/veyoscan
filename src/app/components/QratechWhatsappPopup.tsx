@@ -1,24 +1,20 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 type Props = {
-  open: boolean;
-  onClose: () => void;
-
-  // optional: agar aap different number / message chahte ho
-  businessPhone?: string; // countrycode + number, no +, no spaces. ex: 917819004337
+  businessPhone?: string;
   title?: string;
   subtitle?: string;
 };
 
 export default function VeyoscanWhatsappPopup({
-  open,
-  onClose,
   businessPhone = '919643964242',
   title = 'Connect with VeyoScan',
   subtitle = 'Share your details and our team will assist you with the right QR solution on WhatsApp.',
 }: Props) {
+  const [open, setOpen] = useState(false);
+
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -27,29 +23,12 @@ export default function VeyoscanWhatsappPopup({
 
   const [touched, setTouched] = useState(false);
 
-  // ESC to close + body scroll lock
-  useEffect(() => {
-    if (!open) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-
-    document.addEventListener('keydown', onKeyDown);
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.removeEventListener('keydown', onKeyDown);
-      document.body.style.overflow = '';
-    };
-  }, [open, onClose]);
-
   const errors = useMemo(() => {
     const e: Record<string, string> = {};
 
     if (!form.name.trim()) e.name = 'Name is required';
 
-    const digits = (form.phone || '').replace(/[^\d]/g, '');
+    const digits = form.phone.replace(/[^\d]/g, '');
     if (!digits) e.phone = 'Phone number is required';
     else if (digits.length < 10) e.phone = 'Enter a valid phone number';
 
@@ -62,6 +41,16 @@ export default function VeyoscanWhatsappPopup({
 
   const isValid = Object.keys(errors).length === 0;
 
+  const closePopup = () => {
+    setOpen(false);
+    document.body.style.overflow = '';
+  };
+
+  const openPopup = () => {
+    setOpen(true);
+    document.body.style.overflow = 'hidden';
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -71,7 +60,7 @@ export default function VeyoscanWhatsappPopup({
     setTouched(true);
     if (!isValid) return;
 
-    const digitsPhone = (form.phone || '').replace(/[^\d]/g, '');
+    const digitsPhone = form.phone.replace(/[^\d]/g, '');
 
     const msg = `Hello VeyoScan Team 👋
 
@@ -90,110 +79,95 @@ Please share:
 Looking forward to connecting with your team.`;
 
     const url = `https://wa.me/${businessPhone}?text=${encodeURIComponent(msg)}`;
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
 
-    onClose();
+    closePopup();
   };
 
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-[80]">
-      {/* Backdrop */}
+    <>
+      {/* Floating WhatsApp Button */}
       <button
-        aria-label="Close popup"
-        onClick={onClose}
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-      />
+        type="button"
+        onClick={openPopup}
+        aria-label="Open WhatsApp support form"
+        title="Connect with VeyoScan on WhatsApp"
+        className="fixed bottom-5 left-5 z-[70] rounded-full bg-cyan-400 px-5 py-3 text-sm font-semibold text-black shadow-lg transition hover:brightness-110 active:scale-95"
+      >
+        WhatsApp
+      </button>
 
-      {/* Modal */}
-      <div className="relative mx-auto flex min-h-[100svh] max-w-xl items-center justify-center px-4 py-10">
-        <div className="relative w-full overflow-hidden rounded-3xl border border-white/10 bg-[#0a0f1a]/95 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_30px_80px_rgba(0,0,0,0.65)]">
-          {/* Glow */}
-          <div className="pointer-events-none absolute -top-24 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full bg-cyan-400/20 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-24 right-10 h-56 w-56 rounded-full bg-blue-500/15 blur-3xl" />
+      {open ? (
+        <div className="fixed inset-0 z-[80]">
+          <button
+            type="button"
+            aria-label="Close WhatsApp support popup"
+            onClick={closePopup}
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+          />
 
-          {/* Header */}
-          <div className="relative border-b border-white/10 px-6 py-5">
-            <div className="pr-12">
-              <div className="mb-2 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
-                VeyoScan Support
+          <div className="relative mx-auto flex min-h-[100svh] max-w-xl items-center justify-center px-4 py-10">
+            <div className="relative w-full overflow-hidden rounded-3xl border border-white/10 bg-[#0a0f1a]/95 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_30px_80px_rgba(0,0,0,0.65)]">
+              <div className="pointer-events-none absolute -top-24 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full bg-cyan-400/20 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-24 right-10 h-56 w-56 rounded-full bg-blue-500/15 blur-3xl" />
+
+              <div className="relative border-b border-white/10 px-6 py-5">
+                <div className="pr-12">
+                  <div className="mb-2 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                    VeyoScan Support
+                  </div>
+
+                  <h3 className="text-xl font-semibold tracking-tight text-white">
+                    {title}
+                  </h3>
+
+                  <p className="mt-2 text-sm leading-6 text-white/70">
+                    {subtitle}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={closePopup}
+                  className="absolute right-4 top-4 rounded-xl border border-white/10 bg-white/5 p-2 text-white/80 transition hover:bg-white/10 hover:text-white"
+                  aria-label="Close WhatsApp support popup"
+                  title="Close"
+                >
+                  ✕
+                </button>
               </div>
 
-              <h3 className="text-xl font-semibold tracking-tight text-white">
-                {title}
-              </h3>
+              <form onSubmit={handleSubmit} className="px-6 py-6">
+                <div className="mb-5 rounded-2xl border border-cyan-400/15 bg-white/[0.03] p-4">
+                  <p className="text-sm leading-6 text-white/75">
+                    Tell us a little about yourself and we will help you with the
+                    best <span className="font-semibold text-cyan-300">VeyoScan QR solution</span> for your
+                    business, vehicle, shop, office, or personal use.
+                  </p>
+                </div>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
-                {subtitle}
-              </p>
+                <div className="space-y-4">
+                  <Field label="Full Name" name="name" value={form.name} onChange={handleChange} placeholder="Enter your full name" error={touched ? errors.name : ''} />
+                  <Field label="Phone Number" name="phone" value={form.phone} onChange={handleChange} placeholder="Enter your mobile number" inputMode="numeric" error={touched ? errors.phone : ''} />
+                  <Field label="Email Address" name="email" value={form.email} onChange={handleChange} placeholder="Enter your email address" type="email" error={touched ? errors.email : ''} />
+                </div>
+
+                <button
+                  type="submit"
+                  className="mt-6 w-full rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-3.5 text-sm font-semibold text-black transition hover:brightness-110 active:brightness-95"
+                >
+                  Continue to WhatsApp
+                </button>
+
+                <p className="mt-3 text-center text-xs leading-5 text-white/55">
+                  By continuing, you agree to share these details with the VeyoScan team on WhatsApp for product assistance and follow-up.
+                </p>
+              </form>
             </div>
-
-            <button
-              onClick={onClose}
-              className="absolute right-4 top-4 rounded-xl border border-white/10 bg-white/5 p-2 text-white/80 transition hover:bg-white/10 hover:text-white"
-              aria-label="Close"
-              title="Close"
-            >
-              ✕
-            </button>
           </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="px-6 py-6">
-            <div className="mb-5 rounded-2xl border border-cyan-400/15 bg-white/[0.03] p-4">
-              <p className="text-sm leading-6 text-white/75">
-                Tell us a little about yourself and we will help you with the
-                best <span className="font-semibold text-cyan-300">VeyoScan QR solution</span> for your
-                business, vehicle, shop, office, or personal use.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <Field
-                label="Full Name"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                placeholder="Enter your full name"
-                error={touched ? errors.name : ''}
-              />
-
-              <Field
-                label="Phone Number"
-                name="phone"
-                value={form.phone}
-                onChange={handleChange}
-                placeholder="Enter your mobile number"
-                inputMode="numeric"
-                error={touched ? errors.phone : ''}
-              />
-
-              <Field
-                label="Email Address"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="Enter your email address"
-                type="email"
-                error={touched ? errors.email : ''}
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="mt-6 w-full rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-3.5 text-sm font-semibold text-black transition hover:brightness-110 active:brightness-95"
-            >
-              Continue to WhatsApp
-            </button>
-
-            <p className="mt-3 text-center text-xs leading-5 text-white/55">
-              By continuing, you agree to share these details with the VeyoScan team on WhatsApp for product assistance and follow-up.
-            </p>
-          </form>
         </div>
-      </div>
-    </div>
+      ) : null}
+    </>
   );
 }
 

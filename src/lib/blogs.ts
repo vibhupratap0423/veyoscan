@@ -94,7 +94,7 @@ export const blogs: BlogPost[] = [
         "A <a href='/get-qr/vehicle' class='text-emerald-600 font-semibold hover:underline'>QR sticker for cars</a> is a smart, scannable code placed on a vehicle that allows people to contact the owner instantly during parking issues or emergencies. It helps prevent towing, resolve parking conflicts, improve vehicle safety and protect personal privacy without displaying a phone number publicly.",
       ],
       innerImage: {
-        src: "/blogs/inner1.png",
+        src: "/blogs/inner-image/1.png",
         alt: "Smart QR Tag use cases",
         caption:
           "One scan can help during emergencies, parking issues and lost item recovery.",
@@ -424,7 +424,7 @@ export const blogs: BlogPost[] = [
         "As cities become more crowded and parking challenges increase, <a href='/' class='text-emerald-600 font-semibold hover:underline'>smart QR codes</a> are becoming an <a href='/' class='text-emerald-600 font-semibold hover:underline'>essential car accessory</a> for modern vehicle owners in 2026.",
       ],
       innerImage: {
-        src: "/blogs/inner1.png",
+        src: "/blogs/inner-image/2.png",
         alt: "Smart QR Tag use cases",
         caption:
           "One scan can help during emergencies, parking issues and lost item recovery.",
@@ -726,7 +726,7 @@ export const blogs: BlogPost[] = [
       heading: "Why Emergency Communication Matters More Than Ever",
       body: ["Emergencies can happen at any time.", "Examples include:"],
       innerImage: {
-    src: "/blogs/inner1.png",
+    src: "/blogs/inner-image/3.png",
     alt: "Smart QR Tag use cases",
     caption: "One scan can help during emergencies, parking issues and lost item recovery.",
   },
@@ -987,7 +987,7 @@ export const blogs: BlogPost[] = [
         "As digital safety solutions become more popular, smart QR tags are becoming an essential everyday safety tool in 2026.",
       ],
       innerImage: {
-    src: "/blogs/inner1.png",
+    src: "/blogs/inner-image/4.png",
     alt: "Smart QR Tag use cases",
     caption: "One scan can help during emergencies, parking issues and lost item recovery.",
   },
@@ -1256,7 +1256,7 @@ export const blogs: BlogPost[] = [
         "A Lost Item QR is a smart QR code sticker or tag attached to personal belongings such as wallets, keys, phones, bags, laptops and luggage. When someone finds the item, they can scan the QR code and securely contact the owner, increasing the chances of recovering the lost item quickly without exposing personal information publicly.",
       ],
       innerImage: {
-    src: "/blogs/inner1.png",
+    src: "/blogs/inner-image/5.png",
     alt: "Smart QR Tag use cases",
     caption: "One scan can help during emergencies, parking issues and lost item recovery.",
   },
@@ -1455,7 +1455,7 @@ export const blogs: BlogPost[] = [
         "An Emergency QR Code is a smart QR code that gives instant access to important emergency contact information when scanned. It functions as an emergency contact QR code that helps family members, responders, or finders quickly reach the right person during urgent situations. It can help family members, bystanders, emergency responders, or finders quickly reach the right person during medical emergencies, accidents, lost-item situations, or other urgent events. By combining accessibility with privacy, emergency QR codes help families stay prepared for unexpected situations.",
       ],
       innerImage: {
-    src: "/blogs/inner1.png",
+    src: "/blogs/inner-image/6.png",
     alt: "Smart QR Tag use cases",
     caption: "One scan can help during emergencies, parking issues and lost item recovery.",
   },
@@ -1680,7 +1680,7 @@ export const blogs: BlogPost[] = [
         "With a simple <a href=\"/\">QR code</a> placed at the entrance, gate, door, or society access point, visitors can securely connect with residents without requiring personal information to be displayed publicly.",
       ],
       innerImage: {
-    src: "/blogs/inner1.png",
+    src: "/blogs/inner-image/7.png",
     alt: "Smart QR Tag use cases",
     caption: "One scan can help during emergencies, parking issues and lost item recovery.",
   },

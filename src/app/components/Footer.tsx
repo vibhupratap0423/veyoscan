@@ -15,7 +15,6 @@ import {
 } from "react-icons/fa";
 
 export default function Footer() {
-
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -25,13 +24,15 @@ export default function Footer() {
 
   return (
     <footer className="relative bg-[#050b14] text-white overflow-hidden pt-16 pb-6">
-      
       {/* Back to Top Button */}
       <button
+        type="button"
         onClick={scrollToTop}
+        aria-label="Back to top"
+        title="Back to top"
         className="fixed bottom-6 right-6 z-50 bg-cyan-400 text-black p-3 rounded-full shadow-lg hover:scale-110 transition"
       >
-        <FaArrowUp />
+        <FaArrowUp aria-hidden="true" />
       </button>
 
       {/* animated bg glow */}
@@ -42,7 +43,6 @@ export default function Footer() {
       />
 
       <div className="relative mx-auto max-w-7xl px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
-        
         {/* Left section */}
         <div className="relative">
           <motion.div
@@ -58,7 +58,7 @@ export default function Footer() {
               width={100}
               height={100}
               className="rounded-md object-contain"
-              priority
+              priority={false}
             />
             <h3 className="text-xl font-semibold tracking-wide">
               Smarter Way To Be Reached
@@ -77,12 +77,33 @@ export default function Footer() {
           <h4 className="text-xl font-semibold text-cyan-400 mb-4">
             Quick Links
           </h4>
+
           <ul className="space-y-2 text-white/80">
-            <li><Link href="/" className="hover:text-cyan-300">Home</Link></li>
-            <li><Link href="/about" className="hover:text-cyan-300">About</Link></li>
-            <li><Link href="/get-qr/pricing" className="hover:text-cyan-300">Pricing</Link></li>
-            <li><Link href="/use" className="hover:text-cyan-300">Use-Cases</Link></li>
-            <li><Link href="/blogs" className="hover:text-cyan-300">Blogs</Link></li>
+            <li>
+              <Link href="/" className="hover:text-cyan-300">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link href="/about" className="hover:text-cyan-300">
+                About
+              </Link>
+            </li>
+            <li>
+              <Link href="/get-qr/pricing" className="hover:text-cyan-300">
+                Pricing
+              </Link>
+            </li>
+            <li>
+              <Link href="/use" className="hover:text-cyan-300">
+                Use-Cases
+              </Link>
+            </li>
+            <li>
+              <Link href="/blogs" className="hover:text-cyan-300">
+                Blogs
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -91,10 +112,23 @@ export default function Footer() {
           <h4 className="text-xl font-semibold text-cyan-400 mb-4">
             Support
           </h4>
+
           <ul className="space-y-2 text-white/80">
-            <li><Link href="/privacy" className="hover:text-cyan-300">Privacy Policy</Link></li>
-            <li><Link href="/privacy" className="hover:text-cyan-300">Terms & Conditions</Link></li>
-            <li><Link href="/contact" className="hover:text-cyan-300">Help Center</Link></li>
+            <li>
+              <Link href="/privacy" className="hover:text-cyan-300">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link href="/privacy" className="hover:text-cyan-300">
+                Terms & Conditions
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="hover:text-cyan-300">
+                Help Center
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
@@ -104,52 +138,77 @@ export default function Footer() {
 
       {/* Contact + CTA */}
       <div className="relative mx-auto max-w-7xl px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-        
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 text-white/80 text-sm sm:text-base">
-          
           <div className="flex items-center gap-2">
-            <FaEnvelope className="text-cyan-400" />
+            <FaEnvelope className="text-cyan-400" aria-hidden="true" />
             <span>support@veyoscan.com</span>
           </div>
 
-          <a href="tel:+919643964242" className="flex items-center gap-2 hover:text-cyan-300">
-            <FaPhoneAlt className="text-cyan-400" />
+          <a
+            href="tel:+919643964242"
+            aria-label="Call VeyoScan support"
+            className="flex items-center gap-2 hover:text-cyan-300"
+          >
+            <FaPhoneAlt className="text-cyan-400" aria-hidden="true" />
             <span>+91 9643964242</span>
           </a>
 
           <a
             href="https://wa.me/919643964242"
             target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Chat with VeyoScan on WhatsApp"
             className="flex items-center gap-2 hover:text-green-400"
           >
-            <FaWhatsapp className="text-green-400" />
+            <FaWhatsapp className="text-green-400" aria-hidden="true" />
             <span>+91 9643964242</span>
           </a>
 
           {/* Social icons */}
           <div className="flex items-center gap-3 ml-0 sm:ml-4">
-            
-            <a href="https://www.instagram.com/veyoscan/" target="_blank" className="bg-white/10 p-2 rounded-full hover:bg-pink-500/20">
-              <FaInstagram />
+            <a
+              href="https://www.instagram.com/veyoscan/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open VeyoScan Instagram profile"
+              title="Instagram"
+              className="bg-white/10 p-2 rounded-full hover:bg-pink-500/20"
+            >
+              <FaInstagram aria-hidden="true" />
             </a>
 
-            <a href="https://www.facebook.com/profile.php?id=61572231007919" target="_blank" className="bg-white/10 p-2 rounded-full hover:bg-blue-500/20">
-              <FaFacebookF />
+            <a
+              href="https://www.facebook.com/profile.php?id=61572231007919"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open VeyoScan Facebook profile"
+              title="Facebook"
+              className="bg-white/10 p-2 rounded-full hover:bg-blue-500/20"
+            >
+              <FaFacebookF aria-hidden="true" />
             </a>
 
-            <a href="https://www.youtube.com/@veyoscan" target="_blank" className="bg-white/10 p-2 rounded-full hover:bg-blue-400/20">
-              <FaYoutube />
+            <a
+              href="https://www.youtube.com/@veyoscan"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open VeyoScan YouTube channel"
+              title="YouTube"
+              className="bg-white/10 p-2 rounded-full hover:bg-blue-400/20"
+            >
+              <FaYoutube aria-hidden="true" />
             </a>
 
-            {/* ✅ LinkedIn Added */}
             <a
               href="https://www.linkedin.com/company/veyoscan"
               target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open VeyoScan LinkedIn page"
+              title="LinkedIn"
               className="bg-white/10 p-2 rounded-full hover:bg-blue-600/20"
             >
-              <FaLinkedinIn />
+              <FaLinkedinIn aria-hidden="true" />
             </a>
-
           </div>
         </div>
 
@@ -157,6 +216,7 @@ export default function Footer() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           href="/get-qr"
+          aria-label="Get your VeyoScan QR code"
           className="bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-semibold px-6 py-3 rounded-full shadow-[0_0_25px_rgba(34,211,238,0.5)] hover:shadow-[0_0_35px_rgba(34,211,238,0.8)] transition"
         >
           Get Your QR
